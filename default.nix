@@ -1,3 +1,11 @@
-{ nixpkgs ? import <nixpkgs> {}, compiler ? "ghc802" }:
-let haskell = nixpkgs.pkgs.haskell;
-in haskell.packages.${compiler}.callPackage ./siren.nix {}
+{ nixpkgs ? import <nixpkgs> { }
+, compiler ? "default"
+}:
+let
+  inherit (nixpkgs) pkgs;
+
+  haskellPackages = if compiler == "default"
+                       then pkgs.haskellPackages
+                       else pkgs.haskell.packages.${compiler};
+in
+  haskellPackages.callPackage ./siren.nix { }
