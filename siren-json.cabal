@@ -1,12 +1,12 @@
-name:                siren
+name:                siren-json
 version:             0.1.0.0
 synopsis:            Siren Tools for Haskell
 
 description:         
   Types, classes, and functions for using the Siren—Hypermedia Type in Haskell.
 
-homepage:            https://github.com/alunduil/siren
-bug-reports:         https://github.com/alunduil/siren/issues
+homepage:            https://github.com/alunduil/siren-json.hs
+bug-reports:         https://github.com/alunduil/siren-json.hs/issues
 license:             MIT
 license-file:        LICENSE
 author:              Alex Brandt
@@ -26,7 +26,7 @@ extra-source-files:
 
 source-repository head
   type:     git
-  location: https://github.com/alunduil/siren
+  location: https://github.com/alunduil/siren-json.git
   branch:   develop
 
 library
@@ -42,17 +42,24 @@ library
       Data.SirenJSON
 
   other-modules:
-      Internal.Network.URI
+      Internal.Network.HTTP.Media.MediaType.JSON
+    , Internal.Network.HTTP.Types.Method.JSON
+    , Internal.Network.URI.JSON
 
   build-depends:
-      aeson       >= 0.8 && < 1.2
-    , base        >= 4.6 && < 4.12
-    , network-uri == 2.6.*
-    , text        == 1.2.*
+      aeson                >= 0.8 && < 1.2
+    , base                 >= 4.6 && < 4.12
+    , bytestring           == 0.10.*
+    , containers           == 0.5.*
+    , http-media           == 0.6.*
+    , http-types           == 0.9.*
+    , network-uri          == 2.6.*
+    , text                 == 1.2.*
+    , unordered-containers == 0.2.*
 
   other-extensions:
 
-test-suite siren-tests
+test-suite siren-json-tests
   default-language: Haskell2010
   type:             exitcode-stdio-1.0
   main-is:          Spec.hs
@@ -67,11 +74,20 @@ test-suite siren-tests
   other-modules:
       Data.SirenJSON
     , Data.SirenJSON.Arbitrary
+    , Data.SirenJSON.Norm
     , Data.SirenJSONSpec
-
-    , Internal.Network.URI
+    , Internal.Network.HTTP.Media.MediaType.Arbitrary
+    , Internal.Network.HTTP.Media.MediaType.ArbitrarySpec
+    , Internal.Network.HTTP.Media.MediaType.JSON
+    , Internal.Network.HTTP.Media.MediaType.JSONSpec
+    , Internal.Network.HTTP.Types.Method.Arbitrary
+    , Internal.Network.HTTP.Types.Method.ArbitrarySpec
+    , Internal.Network.HTTP.Types.Method.JSON
+    , Internal.Network.HTTP.Types.Method.JSONSpec
     , Internal.Network.URI.Arbitrary
-    , Internal.Network.URISpec
+    , Internal.Network.URI.ArbitrarySpec
+    , Internal.Network.URI.JSON
+    , Internal.Network.URI.JSONSpec
 
   build-tool-depends:
       hspec-discover:hspec-discover == 2.4.*
@@ -80,11 +96,16 @@ test-suite siren-tests
       aeson                >= 0.8 && < 1.2
     , base                 >= 4.6 && < 4.12
     , bytestring           == 0.10.*
+    , case-insensitive     == 1.2.*
+    , containers           == 0.5.*
     , hspec                == 2.4.*
+    , http-media           == 0.6.*
+    , http-types           == 0.9.*
     , network-uri          == 2.6.*
     , QuickCheck           == 2.9.*
     , quickcheck-instances == 0.3.*
     , test-invariant       == 0.4.*
     , text                 == 1.2.*
+    , unordered-containers == 0.2.*
 
   other-extensions:
