@@ -21,7 +21,7 @@ extra-source-files:
     ChangeLog.md
   , COPYRIGHT
   , LICENSE
-  , REAMDE.md
+  , README.md
   , Setup.hs
 
 source-repository head
