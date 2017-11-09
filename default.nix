@@ -8,4 +8,4 @@ let
                        then pkgs.haskellPackages
                        else pkgs.haskell.packages.${compiler};
 in
-  haskellPackages.callPackage ./siren.nix { }
+  haskellPackages.callPackage ./siren-json.nix { }

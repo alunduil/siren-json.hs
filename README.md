@@ -2,13 +2,13 @@
 
 [Siren] Tools
 
-Types, classes, and functions for using the [Siren][siren] in [Haskell].
+Types, classes, and functions for using [Siren][siren] in [Haskell].
 
 # Getting Started
 
 Documentation is available on [Hackage] and information about
 `application/vnd.siren+json` can be found at
-<http://amundsen.com/media-types/collection/>.
+<https://github.com/kevinswiber/siren>.
 
 # Reporting Issues
 
@@ -30,5 +30,5 @@ attribution; please, add yourself to the `COPYRIGHT` file.
 [git flow]: http://nvie.com/posts/a-successful-git-branching-model/
 [Hackage]: https://hackage.haskell.org/package/collection-json
 [Haskell]: https://www.haskell.org/
-[issues]: https://github.com/alunduil/siren/issues
-[travis]: https://travis-ci.org/alunduil/siren
+[issues]: https://github.com/alunduil/siren-json.hs/issues
+[travis]: https://travis-ci.org/alunduil/siren-json.hs
