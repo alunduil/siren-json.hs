@@ -15,6 +15,7 @@ module Data.SirenJSON.Norm
   ( Norm (..)
   ) where
 
+import Data.Functor ((<$>))
 import Data.Maybe (isNothing)
 import Network.HTTP.Types.Method (StdMethod (GET))
 
