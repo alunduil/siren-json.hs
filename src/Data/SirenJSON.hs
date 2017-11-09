@@ -118,8 +118,8 @@ instance FromJSON Link where
 instance ToJSON Link where
   toJSON Link{..} = object $ catMaybes
     [ if null lClass then Nothing else Just $ "class" .= lClass
-    , Just $ "rel"   .= lRel
-    , Just $ "href"  .= lHref
+    , Just $ "rel"  .= lRel
+    , Just $ "href" .= lHref
     , (.=) "type"  <$> lType
     , (.=) "title" <$> lTitle
     ]
@@ -149,12 +149,12 @@ instance FromJSON Action where
 
 instance ToJSON Action where
   toJSON Action{..} = object $ catMaybes
-    [ Just $ "name"   .= aName
+    [ Just $ "name" .= aName
     , if null aClass then Nothing else Just $ "class"  .= aClass
     , (.=) "method" <$> aMethod
-    , Just $ "href"   .= aHref
-    , (.=) "title"  <$> aTitle
-    , (.=) "type"   <$> (show <$> aType)
+    , Just $ "href" .= aHref
+    , (.=) "title" <$> aTitle
+    , (.=) "type"  <$> (show <$> aType)
     , if null aFields then Nothing else Just $ "fields" .= aFields
     ]
 
@@ -179,7 +179,7 @@ instance FromJSON Field where
 
 instance ToJSON Field where
   toJSON Field{..} = object $ catMaybes
-    [ Just $ "name"  .= fName
+    [ Just $ "name" .= fName
     , if null fClass then Nothing else Just $ "class" .= fClass
     , (.=) "type"  <$> fType
     , (.=) "value" <$> fValue
