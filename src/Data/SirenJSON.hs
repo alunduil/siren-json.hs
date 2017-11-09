@@ -27,9 +27,9 @@ import Network.URI (URI)
 import qualified Data.HashMap.Lazy as HashMap (fromList)
 import qualified Data.Map.Strict as Map (empty, Map, null)
 
-import Internal.Network.HTTP.Media.MediaType.JSON ()
-import Internal.Network.HTTP.Types.Method.JSON ()
-import Internal.Network.URI.JSON ()
+import External.Network.HTTP.Media.MediaType.JSON ()
+import External.Network.HTTP.Types.Method.JSON ()
+import External.Network.URI.JSON ()
 
 -- * Core Data Types
 

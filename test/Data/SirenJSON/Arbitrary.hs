@@ -15,9 +15,9 @@ import Test.QuickCheck (Arbitrary (arbitrary), elements, oneof, scale)
 import Test.QuickCheck.Instances ()
 
 import Data.SirenJSON
-import Internal.Network.HTTP.Media.MediaType.Arbitrary ()
-import Internal.Network.HTTP.Types.Method.Arbitrary ()
-import Internal.Network.URI.Arbitrary ()
+import External.Network.HTTP.Media.MediaType.Arbitrary ()
+import External.Network.HTTP.Types.Method.Arbitrary ()
+import External.Network.URI.Arbitrary ()
 
 instance Arbitrary Entity where
   arbitrary = Entity <$> arbitrary

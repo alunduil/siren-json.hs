@@ -1,14 +1,14 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 {-|
-Module      : Internal.Network.HTTP.Media.MediaType.JSON
+Module      : External.Network.HTTP.Media.MediaType.JSON
 Description : MediaType FromJSON and ToJSON Instances
 Copyright   : (c) Alex Brandt, 2017
 License     : MIT
 
 MediaType Instances for FromJSON and ToJSON.
 -}
-module Internal.Network.HTTP.Media.MediaType.JSON where
+module External.Network.HTTP.Media.MediaType.JSON where
 
 import Data.Aeson (FromJSON (parseJSON), ToJSON (toJSON), withText)
 import Data.String (fromString)

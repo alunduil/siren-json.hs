@@ -1,12 +1,12 @@
 {-|
-Module      : Internal.Network.HTTP.Media.MediaType.ArbitrarySpec
-Description : Tests for Internal.Network.HTTP.Media.MediaType.Arbitrary
+Module      : External.Network.HTTP.Media.MediaType.ArbitrarySpec
+Description : Tests for External.Network.HTTP.Media.MediaType.Arbitrary
 Copyright   : (c) Alex Brandt, 2017
 License     : MIT
 
-Tests for "Internal.Network.HTTP.Media.MediaType.Arbitrary".
+Tests for "External.Network.HTTP.Media.MediaType.Arbitrary".
 -}
-module Internal.Network.HTTP.Media.MediaType.ArbitrarySpec (main, spec) where
+module External.Network.HTTP.Media.MediaType.ArbitrarySpec (main, spec) where
 
 import Prelude hiding (null)
 
@@ -16,7 +16,7 @@ import Network.HTTP.Media.MediaType (mainType, subType)
 import Test.Hspec (describe, hspec, Spec)
 import Test.Hspec.QuickCheck (prop)
 
-import Internal.Network.HTTP.Media.MediaType.Arbitrary ()
+import External.Network.HTTP.Media.MediaType.Arbitrary ()
 
 main :: IO ()
 main = hspec spec

@@ -1,14 +1,14 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 {-|
-Module      : Internal.Network.HTTP.Media.MediaType.Arbitrary
+Module      : External.Network.HTTP.Media.MediaType.Arbitrary
 Description : Arbitrary Instances for Network.HTTP.Media.MediaType
 Copyright   : (c) Alex Brandt, 2017
 License     : MIT
 
 Arbitrary instances for "Network.HTTP.Media.MediaType".
 -}
-module Internal.Network.HTTP.Media.MediaType.Arbitrary () where
+module External.Network.HTTP.Media.MediaType.Arbitrary () where
 
 import Prelude hiding (concat)
 

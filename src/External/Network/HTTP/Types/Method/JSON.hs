@@ -1,14 +1,14 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 {-|
-Module      : Internal.Network.HTTP.Types.Method.JSON
+Module      : External.Network.HTTP.Types.Method.JSON
 Description : Method FromJSON and ToJSON Instances
 Copyright   : (c) Alex Brandt, 2017
 License     : MIT
 
 Method Instances for FromJSON and ToJSON.
 -}
-module Internal.Network.HTTP.Types.Method.JSON where
+module External.Network.HTTP.Types.Method.JSON where
 
 import Data.Aeson (FromJSON (parseJSON), ToJSON (toJSON), withText)
 import Data.ByteString.Char8 (unpack)

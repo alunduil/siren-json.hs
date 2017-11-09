@@ -1,12 +1,12 @@
 {-|
-Module      : Internal.Network.HTTP.Types.Method.JSONSpec
-Description : Tests for Internal.Network.HTTP.Types.Method.JSON
+Module      : External.Network.HTTP.Types.Method.JSONSpec
+Description : Tests for External.Network.HTTP.Types.Method.JSON
 Copyright   : (c) Alex Brandt, 2017
 License     : MIT
 
-Tests for "Internal.Network.HTTP.Types.Method.JSON".
+Tests for "External.Network.HTTP.Types.Method.JSON".
 -}
-module Internal.Network.HTTP.Types.Method.JSONSpec (main, spec) where
+module External.Network.HTTP.Types.Method.JSONSpec (main, spec) where
 
 import Data.Aeson (decode, encode)
 import Data.Maybe (fromJust)
@@ -15,8 +15,8 @@ import Test.Hspec (describe, hspec, Spec)
 import Test.Hspec.QuickCheck (prop)
 import Test.Invariant ((<=>))
 
-import Internal.Network.HTTP.Types.Method.Arbitrary ()
-import Internal.Network.HTTP.Types.Method.JSON ()
+import External.Network.HTTP.Types.Method.Arbitrary ()
+import External.Network.HTTP.Types.Method.JSON ()
 
 main :: IO ()
 main = hspec spec
