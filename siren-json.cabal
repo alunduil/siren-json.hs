@@ -109,3 +109,5 @@ test-suite siren-json-tests
     , unordered-containers == 0.2.*
 
   other-extensions:
+      OverloadedStrings
+    , RecordWildCards
