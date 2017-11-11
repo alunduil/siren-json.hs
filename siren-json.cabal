@@ -1,5 +1,5 @@
 name:                siren-json
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Siren Tools for Haskell
 
 description:         
@@ -109,3 +109,5 @@ test-suite siren-json-tests
     , unordered-containers == 0.2.*
 
   other-extensions:
+      OverloadedStrings
+    , RecordWildCards
