@@ -1,11 +1,22 @@
-{ nixpkgs ? import <nixpkgs> { }
-, compiler ? "default"
+{ mkDerivation, aeson, base, bytestring, case-insensitive
+, containers, hspec, http-media, http-types, network-uri
+, network-uri-json, QuickCheck, quickcheck-instances, stdenv
+, test-invariant, text, unordered-containers
 }:
-let
-  inherit (nixpkgs) pkgs;
-
-  haskellPackages = if compiler == "default"
-                       then pkgs.haskellPackages
-                       else pkgs.haskell.packages.${compiler};
-in
-  haskellPackages.callPackage ./siren-json.nix { }
+mkDerivation {
+  pname = "siren-json";
+  version = "0.1.0.2";
+  src = ./.;
+  libraryHaskellDepends = [
+    aeson base bytestring containers http-media http-types network-uri
+    network-uri-json text unordered-containers
+  ];
+  testHaskellDepends = [
+    aeson base bytestring case-insensitive containers hspec http-media
+    http-types network-uri network-uri-json QuickCheck
+    quickcheck-instances test-invariant text unordered-containers
+  ];
+  homepage = "https://github.com/alunduil/siren-json.hs";
+  description = "Siren Tools for Haskell";
+  license = stdenv.lib.licenses.mit;
+}

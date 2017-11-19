@@ -22,6 +22,7 @@ import Data.Monoid ((<>))
 import Data.Text (Text)
 import Network.HTTP.Media (MediaType)
 import Network.HTTP.Types (StdMethod (GET))
+import Network.URI.JSON ()
 import Network.URI (URI)
 
 import qualified Data.HashMap.Lazy as HashMap (fromList)
@@ -29,7 +30,6 @@ import qualified Data.Map.Strict as Map (empty, Map, null)
 
 import External.Network.HTTP.Media.MediaType.JSON ()
 import External.Network.HTTP.Types.Method.JSON ()
-import External.Network.URI.JSON ()
 
 -- * Core Data Types
 

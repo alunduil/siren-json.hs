@@ -1,5 +1,5 @@
 name:                siren-json
-version:             0.1.0.1
+version:             0.1.0.2
 synopsis:            Siren Tools for Haskell
 
 description:         
@@ -44,7 +44,6 @@ library
   other-modules:
       External.Network.HTTP.Media.MediaType.JSON
     , External.Network.HTTP.Types.Method.JSON
-    , External.Network.URI.JSON
 
   build-depends:
       aeson                >= 0.8 && < 1.2
@@ -54,6 +53,7 @@ library
     , http-media           == 0.6.*
     , http-types           == 0.9.*
     , network-uri          == 2.6.*
+    , network-uri-json     == 0.1.*
     , text                 == 1.2.*
     , unordered-containers == 0.2.*
 
@@ -86,8 +86,6 @@ test-suite siren-json-tests
     , External.Network.HTTP.Types.Method.JSONSpec
     , External.Network.URI.Arbitrary
     , External.Network.URI.ArbitrarySpec
-    , External.Network.URI.JSON
-    , External.Network.URI.JSONSpec
 
   build-tool-depends:
       hspec-discover:hspec-discover == 2.4.*
@@ -102,6 +100,7 @@ test-suite siren-json-tests
     , http-media           == 0.6.*
     , http-types           == 0.9.*
     , network-uri          == 2.6.*
+    , network-uri-json     == 0.1.*
     , QuickCheck           == 2.9.*
     , quickcheck-instances == 0.3.*
     , test-invariant       == 0.4.*
