@@ -5,7 +5,7 @@
 }:
 mkDerivation {
   pname = "siren-json";
-  version = "0.1.0.2";
+  version = "0.1.1.0";
   src = ./.;
   libraryHaskellDepends = [
     aeson base bytestring containers http-media http-types network-uri
