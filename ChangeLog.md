@@ -1,5 +1,9 @@
 # Revision history for siren-json
 
+## 0.1.1.0  -- 2017-12-21
+
+* Bump dependencies on aeson and QuickCheck
+
 ## 0.1.0.2  -- 2017-11-19
 
 * use network-uri-json package
