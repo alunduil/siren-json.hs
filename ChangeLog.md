@@ -1,5 +1,9 @@
 # Revision history for siren-json
 
+## 0.1.2.0  -- 2017-12-24
+
+* Bump dependence on http-media
+
 ## 0.1.1.0  -- 2017-12-21
 
 * Bump dependencies on aeson and QuickCheck
