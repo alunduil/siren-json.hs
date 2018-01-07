@@ -10,12 +10,12 @@ module External.Network.HTTP.Types.Method.JSONSpec (main, spec) where
 
 import Data.Aeson (decode, encode)
 import Data.Maybe (fromJust)
+import Network.HTTP.Types.Method.Arbitrary ()
 import Network.HTTP.Types.Method (StdMethod)
 import Test.Hspec (describe, hspec, Spec)
 import Test.Hspec.QuickCheck (prop)
 import Test.Invariant ((<=>))
 
-import External.Network.HTTP.Types.Method.Arbitrary ()
 import External.Network.HTTP.Types.Method.JSON ()
 
 main :: IO ()
