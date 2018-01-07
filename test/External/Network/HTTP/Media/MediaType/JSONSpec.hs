@@ -10,12 +10,12 @@ module External.Network.HTTP.Media.MediaType.JSONSpec (main, spec) where
 
 import Data.Aeson (decode, encode)
 import Data.Maybe (fromJust)
+import Network.HTTP.Media.MediaType.Arbitrary ()
 import Network.HTTP.Media.MediaType (MediaType)
 import Test.Hspec (describe, hspec, Spec)
 import Test.Hspec.QuickCheck (prop)
 import Test.Invariant ((<=>))
 
-import External.Network.HTTP.Media.MediaType.Arbitrary ()
 import External.Network.HTTP.Media.MediaType.JSON ()
 
 main :: IO ()
