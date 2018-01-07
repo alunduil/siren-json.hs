@@ -1,5 +1,9 @@
 # Revision history for siren-json
 
+## 0.1.3.0  -- 2018-01-06
+
+* Externalize network-arbitrary dependency
+
 ## 0.1.2.0  -- 2017-12-24
 
 * Bump dependence on http-media
