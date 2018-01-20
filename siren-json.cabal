@@ -93,7 +93,7 @@ test-suite siren-json-tests
     , hspec                == 2.4.*
     , http-media           >= 0.6 && < 0.8
     , http-types           == 0.9.*
-    , network-arbitrary    == 0.2.*
+    , network-arbitrary    == 0.3.*
     , network-uri          == 2.6.*
     , network-uri-json     == 0.1.*
     , QuickCheck           >= 2.9 && < 2.11
