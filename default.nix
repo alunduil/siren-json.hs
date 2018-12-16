@@ -1,7 +1,7 @@
 { mkDerivation, aeson, base, bytestring, containers, hspec
-, http-media, http-types, network-arbitrary, network-uri
-, network-uri-json, QuickCheck, quickcheck-instances, stdenv
-, test-invariant, text, unordered-containers
+, hspec-discover, http-media, http-types, network-arbitrary
+, network-uri, network-uri-json, QuickCheck, quickcheck-instances
+, stdenv, test-invariant, text, unordered-containers
 }:
 mkDerivation {
   pname = "siren-json";
@@ -16,6 +16,7 @@ mkDerivation {
     network-arbitrary network-uri network-uri-json QuickCheck
     quickcheck-instances test-invariant text unordered-containers
   ];
+  testToolDepends = [ hspec-discover ];
   homepage = "https://github.com/alunduil/siren-json.hs";
   description = "Siren Tools for Haskell";
   license = stdenv.lib.licenses.mit;

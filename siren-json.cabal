@@ -82,7 +82,7 @@ test-suite siren-json-tests
     , External.Network.HTTP.Types.Method.JSONSpec
 
   build-tool-depends:
-      hspec-discover:hspec-discover == 2.4.*
+      hspec-discover:hspec-discover >= 2.4 && < 2.7
 
   build-depends:
       aeson                >= 0.8 && < 1.3
