@@ -89,7 +89,7 @@ test-suite siren-json-tests
     , base                 >= 4.6 && < 4.12
     , bytestring           == 0.10.*
     , containers           == 0.5.*
-    , hspec                == 2.4.*
+    , hspec                >= 2.4 && < 2.7
     , http-media           >= 0.6 && < 0.8
     , http-types           == 0.9.*
     , network-arbitrary    == 0.3.*
