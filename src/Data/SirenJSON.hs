@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -208,8 +209,7 @@ data InputType = Hidden
   deriving (Eq, Show)
 
 instance FromJSON InputType where
-  parseJSON = withText "InputType" $ \ v ->
-    case v of
+  parseJSON = withText "InputType" $ \case
       "hidden"         -> return Hidden
       "text"           -> return Text
       "search"         -> return Search
@@ -230,7 +230,7 @@ instance FromJSON InputType where
       "radio"          -> return Radio
       "file"           -> return File
       _                -> fail "invalid InputType"
-    
+
 instance ToJSON InputType where
   toJSON Hidden        = String "hidden"
   toJSON Text          = String "text"
