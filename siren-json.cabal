@@ -47,7 +47,7 @@ library
 
   build-depends:
       aeson                >= 0.8 && < 1.5
-    , base                 >= 4.6 && < 4.12
+    , base                 >= 4.6 && < 4.13
     , bytestring           == 0.10.*
     , containers           == 0.5.*
     , http-media           >= 0.6 && < 0.8
@@ -86,7 +86,7 @@ test-suite siren-json-tests
 
   build-depends:
       aeson                >= 0.8 && < 1.5
-    , base                 >= 4.6 && < 4.12
+    , base                 >= 4.6 && < 4.13
     , bytestring           == 0.10.*
     , containers           == 0.5.*
     , hspec                >= 2.4 && < 2.7
