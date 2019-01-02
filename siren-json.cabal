@@ -1,5 +1,5 @@
 name:                siren-json
-version:             0.2.0.0
+version:             0.3.0.0
 synopsis:            Siren Tools for Haskell
 
 description:         
@@ -53,7 +53,7 @@ library
     , http-media           >= 0.6 && < 0.8
     , http-types           >= 0.9 && < 0.13
     , network-uri          == 2.6.*
-    , network-uri-json     >= 0.1 && < 0.3
+    , network-uri-json     >= 0.1 && < 0.4
     , text                 == 1.2.*
     , unordered-containers == 0.2.*
 
@@ -94,7 +94,7 @@ test-suite siren-json-tests
     , http-types           >= 0.9 && < 0.13
     , network-arbitrary    >= 0.3 && < 0.5
     , network-uri          == 2.6.*
-    , network-uri-json     >= 0.1 && < 0.3
+    , network-uri-json     >= 0.1 && < 0.4
     , QuickCheck           >= 2.9 && < 2.13
     , quickcheck-instances == 0.3.*
     , test-invariant       == 0.4.*
