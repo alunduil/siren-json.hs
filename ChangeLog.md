@@ -1,5 +1,9 @@
 # Revision history for siren-json
 
+## 0.3.0.0  -- 2019-01-02
+
+* Update network-uri-json.
+
 ## 0.2.0.0  -- 2018-12-28
 
 * Update base, network-uri-json, network-arbitrary, http-types, hspec, aeson,
