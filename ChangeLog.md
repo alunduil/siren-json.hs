@@ -1,5 +1,10 @@
 # Revision history for siren-json
 
+## 0.3.1.1  -- 2019-02-18
+
+* Integrate cloudbuild fixes from network-arbitrary.
+* Use new-sdist.
+
 ## 0.3.1.0  -- 2019-02-01
 
 * Remove GHC 8.2.1 from testing.
