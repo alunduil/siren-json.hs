@@ -26,7 +26,7 @@ import Network.HTTP.Types (StdMethod (GET))
 import Network.URI.JSON ()
 import Network.URI (URI)
 
-import qualified Data.HashMap.Lazy as HashMap (fromList)
+import qualified Data.Aeson.KeyMap as KeyMap (fromList)
 import qualified Data.Map.Strict as Map (empty, Map, null)
 
 import External.Network.HTTP.Media.MediaType.JSON ()
@@ -89,7 +89,7 @@ instance FromJSON SubEntity where
 
 instance ToJSON SubEntity where
   toJSON (EmbeddedLink l) = toJSON l
-  toJSON EmbeddedRepresentation{..} = Object $ toObject sEntity <> HashMap.fromList ["rel" .= sRel]
+  toJSON EmbeddedRepresentation{..} = Object $ toObject sEntity <> KeyMap.fromList ["rel" .= sRel]
                                       where toObject :: ToJSON a => a -> Object
                                             toObject v = case toJSON v of
                                                            Object o -> o
