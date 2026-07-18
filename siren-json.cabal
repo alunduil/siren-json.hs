@@ -46,7 +46,7 @@ library
     , External.Network.HTTP.Types.Method.JSON
 
   build-depends:
-      aeson >=2.0 && <2.3
+      aeson >=2.0 && <2.4
     , base >=4.6 && <4.23
     , bytestring           == 0.10.*
     , containers           == 0.5.*
@@ -84,7 +84,7 @@ test-suite siren-json-tests
       hspec-discover:hspec-discover >= 2.4 && < 2.8
 
   build-depends:
-      aeson >=2.0 && <2.3
+      aeson >=2.0 && <2.4
     , base >=4.6 && <4.23
     , bytestring           == 0.10.*
     , containers           == 0.5.*
