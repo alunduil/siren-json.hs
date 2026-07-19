@@ -1,9 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:best-practices"
+    "config:best-practices",
+    "schedule:weekly"
+  ],
+  "baseBranchPatterns": [
+    "main"
+  ],
+  "reviewers": [
+    "alunduil"
   ],
   "pre-commit": {
     "enabled": true
-  }
+  },
+  "minimumReleaseAge": "3 days",
+  "internalChecksFilter": "strict",
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": "0 days"
+  },
+  "osvVulnerabilityAlerts": true
 }
