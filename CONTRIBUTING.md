@@ -32,8 +32,7 @@ Run both before opening a pull request.
 - Work on a feature branch and open a pull request against `main`. Pull requests
   are squash-merged, so keep the branch focused on one change.
 - Open the pull request as a draft until it is ready for review.
-- Write imperative commit subjects (e.g. "Add InputType parser") and explain
-  non-obvious *why* in the body.
+- Follow the [seven rules of a great commit message](https://cbea.ms/git-commit/).
 - This library targets the `1.0.0.0` API-commitment milestone. Changes to the
   module export list force a major [PVP](https://pvp.haskell.org/) version bump,
   so avoid adding or removing exports as a side effect of an unrelated change.
