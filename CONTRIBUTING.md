@@ -27,6 +27,14 @@ cabal test
 
 Run both before opening a pull request.
 
+[pre-commit](https://pre-commit.com) checks `renovate.json` against Renovate's
+schema. It only matters if you touch that file, but installing the hook keeps
+the check local rather than a surprise in review.
+
+```sh
+pre-commit install
+```
+
 ## Pull requests
 
 - Work on a feature branch and open a pull request against `main`. Pull requests
