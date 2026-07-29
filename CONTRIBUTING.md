@@ -27,12 +27,15 @@ cabal test
 
 Run both before opening a pull request.
 
-[pre-commit](https://pre-commit.com) checks `renovate.json` against Renovate's
-schema. It only matters if you touch that file, but installing the hook keeps
-the check local rather than a surprise in review.
+[pre-commit](https://pre-commit.com) validates `renovate.json` against
+Renovate's schema. The `CI` workflow
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same hooks,
+so a local install turns a review-time failure into a commit-time one.
 
 ```sh
-pre-commit install
+pre-commit install            # install the git hook (one-off)
+pre-commit run --all-files    # run all hooks against the repo
+pre-commit autoupdate         # bump third-party hook revs
 ```
 
 ## Pull requests
