@@ -2,11 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:best-practices",
-    "schedule:weekly"
+    "security:openssf-scorecard",
+    "customManagers:githubActionsVersions"
   ],
-  "baseBranchPatterns": [
-    "main"
-  ],
+  "timezone": "Europe/London",
   "reviewers": [
     "alunduil"
   ],
@@ -14,10 +13,6 @@
     "enabled": true
   },
   "minimumReleaseAge": "3 days",
-  "internalChecksFilter": "strict",
-  "vulnerabilityAlerts": {
-    "minimumReleaseAge": "0 days"
-  },
   "osvVulnerabilityAlerts": true,
   "packageRules": [
     {
@@ -26,9 +21,13 @@
         "pin",
         "pinDigest",
         "digest",
-        "lockFileMaintenance"
+        "lockFileMaintenance",
+        "lockfileUpdate",
+        "rollback",
+        "bump",
+        "replacement"
       ],
-      "minimumReleaseAge": "0 days"
+      "minimumReleaseAge": null
     }
   ]
 }
