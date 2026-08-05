@@ -10,10 +10,10 @@ steps:
       - name: cabal-config
         path: /builder/home/.cabal
 
-  - name: 'haskell@sha256:0489654c360a12ac38509e9a23a6017d1c86b573171569231c8fe53497b9a2ac'
+  - name: 'haskell@sha256:406d59e658af4f0e9f490bc41bedf633040170a744f97a90ecfc52a29ddd99a9'
     args: [ 'cabal', 'new-sdist' ]
 
-  - name: 'haskell@sha256:0489654c360a12ac38509e9a23a6017d1c86b573171569231c8fe53497b9a2ac'
+  - name: 'haskell@sha256:406d59e658af4f0e9f490bc41bedf633040170a744f97a90ecfc52a29ddd99a9'
     args: [ 'cabal', 'upload', '--publish', '/workspace/dist-newstyle/sdist/siren-json-$TAG_NAME.tar.gz' ]
     volumes:
       - name: cabal-config
