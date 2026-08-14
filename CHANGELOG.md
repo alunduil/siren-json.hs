@@ -8,8 +8,16 @@ and this project adheres to the
 
 ## [Unreleased]
 
+### Added
+
+- Expose `External.Network.HTTP.Media.MediaType.JSON` and
+  `External.Network.HTTP.Types.Method.JSON`, which supply the orphan
+  `FromJSON` and `ToJSON` instances for `MediaType` and `StdMethod`.
+
 ### Changed
 
+- Support GHC 9.6 through 9.14. Version bounds now describe compilers the
+  package is built and tested against; GHC 9.4 and earlier no longer resolve.
 - Update dependencies: base, aeson, http-media, network-arbitrary, hspec, and
   QuickCheck.
 - Require aeson >= 2.2 for its `Network.URI.URI` JSON instances.
