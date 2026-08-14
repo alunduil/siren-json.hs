@@ -12,7 +12,6 @@ Arbitrary instances for "Data.SirenJSON".
 -}
 module Data.SirenJSON.Arbitrary where
 
-import Control.Applicative ((<$>), (<*>))
 import Data.Maybe (mapMaybe)
 import Network.HTTP.Media.MediaType.Arbitrary ()
 import Network.HTTP.Types.Method.Arbitrary ()
