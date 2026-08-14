@@ -12,10 +12,9 @@ and this project adheres to the
 
 - Update dependencies: base, aeson, http-media, network-arbitrary, hspec, and
   QuickCheck.
-- Require aeson >= 2.2, which supplies the `Network.URI.URI` JSON instances.
-- Decode `href` as an absolute URI. Siren defines `href` as a URI, and aeson's
-  instance accepts absolute URIs only, so relative URI references that
-  previously decoded are now rejected.
+- Require aeson >= 2.2 for its `Network.URI.URI` JSON instances.
+- Decode `href` as an absolute URI, matching the Siren specification. Payloads
+  with relative references no longer decode.
 
 ### Removed
 

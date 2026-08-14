@@ -23,8 +23,8 @@ import Test.QuickCheck.Instances ()
 
 import Data.SirenJSON
 
--- | 'Network.URI.Arbitrary' generates URI references, half of them without a
---   scheme, but 'Data.SirenJSON' decodes @href@ as an absolute URI.
+-- | 'Data.SirenJSON' decodes @href@ as an absolute URI, but
+--   'Network.URI.Arbitrary' also generates relative references.
 absoluteURI :: Gen URI
 absoluteURI = arbitrary `suchThat` uriIsAbsolute
 
