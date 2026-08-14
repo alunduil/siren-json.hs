@@ -48,8 +48,8 @@ spec =
 
        describe "href" $
          context "decode absolute URIs only" $
-           do it "Link"   $ (decode rLink   :: Maybe Link)   `shouldBe` Nothing
-              it "Action" $ (decode rAction :: Maybe Action) `shouldBe` Nothing
+           do it "Link"   $ (decode mLink_RelativeHref   :: Maybe Link)   `shouldBe` Nothing
+              it "Action" $ (decode mAction_RelativeHref :: Maybe Action) `shouldBe` Nothing
 
        describe "JSON Missing Keys" $
          do context "decode minimal JSON strings" $
@@ -86,7 +86,7 @@ spec =
         mAction                           = "{\"href\":\"http://example.com\",\"name\":\"name\"}" :: BL.ByteString
         mField                            = "{\"name\":\"name\"}" :: BL.ByteString
 
-        rLink                             = "{\"href\":\"/orders/42\",\"rel\":[]}" :: BL.ByteString
-        rAction                           = "{\"href\":\"/orders/42\",\"name\":\"name\"}" :: BL.ByteString
+        mLink_RelativeHref                = "{\"href\":\"/orders/42\",\"rel\":[]}" :: BL.ByteString
+        mAction_RelativeHref              = "{\"href\":\"/orders/42\",\"name\":\"name\"}" :: BL.ByteString
 
         eURI = fromJust $ parseURI "http://example.com"
