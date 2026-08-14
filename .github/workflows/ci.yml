@@ -32,6 +32,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
 
+    env:
+      # The test-only network-arbitrary caps base < 4.21 (no GHC 9.12+) and
+      # lags QuickCheck. Its main has the fix but is unreleased
+      # (alunduil/network-arbitrary#106), so relax those two bounds for that
+      # one package; the library's own published bounds stay strictly
+      # enforced. Deleting this entry removes the stopgap — the build steps
+      # expand it to nothing.
+      ALLOW_NEWER: --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+
     strategy:
       fail-fast: false
       matrix:
@@ -55,13 +64,7 @@ jobs:
       # Everything below builds from the sdist tarball, not the working
       # tree: it exercises the bare published bounds a Hackage consumer
       # faces and validates that every source and test file is packaged.
-      #
-      # The lone exception: the test-only network-arbitrary still caps
-      # base < 4.21 (no GHC 9.12+) and lags QuickCheck, so its bounds on
-      # those two are relaxed via allow-newer below, pending a release
-      # (alunduil/network-arbitrary#106). Scoped to that one package, so
-      # the library's own published bounds stay strictly enforced; grep
-      # allow-newer to remove the stopgap once the release ships.
+      # ALLOW_NEWER above is the one relaxation.
       - name: Build sdist
         run: cabal sdist all
 
@@ -74,7 +77,7 @@ jobs:
 
       - name: Generate build plan
         working-directory: sdist-build
-        run: cabal build all --enable-tests --dry-run --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+        run: cabal build all --enable-tests --dry-run $ALLOW_NEWER
 
       - name: Restore cabal store
         id: cache
@@ -88,7 +91,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: sdist-build
-        run: cabal build all --enable-tests --only-dependencies --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+        run: cabal build all --enable-tests --only-dependencies $ALLOW_NEWER
 
       - name: Save cabal store
         if: steps.cache.outputs.cache-hit != 'true'
@@ -99,11 +102,11 @@ jobs:
 
       - name: Build
         working-directory: sdist-build
-        run: cabal build all --enable-tests --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+        run: cabal build all --enable-tests $ALLOW_NEWER
 
       - name: Test
         working-directory: sdist-build
-        run: cabal test all --enable-tests --test-show-details=direct --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+        run: cabal test all --enable-tests --test-show-details=direct $ALLOW_NEWER
 
       - name: Check package metadata
         working-directory: sdist-build
@@ -111,4 +114,4 @@ jobs:
 
       - name: Haddock
         working-directory: sdist-build
-        run: cabal haddock all --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+        run: cabal haddock all $ALLOW_NEWER

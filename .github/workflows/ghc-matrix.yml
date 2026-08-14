@@ -34,56 +34,74 @@ jobs:
         run: |
           set -euo pipefail
 
-          expected=$(curl -fsSL https://endoflife.date/api/ghc.json \
-            | jq -r 'map(select(.eol == false)) | .[].cycle' \
-            | sort -V)
+          # Three sources each name a set of GHC major series. Every query
+          # yields one series per line, sorted, so they compare as strings.
+          # Each ends in `|| true` so a failure surfaces as an empty set for
+          # require_series to name, rather than killing the step under
+          # `set -e` with only the underlying tool's stderr to go on.
+          upstream_series() {
+            curl -fsSL https://endoflife.date/api/ghc.json \
+              | jq -r 'map(select(.eol == false)) | .[].cycle' | sort -V || true
+          }
 
-          # Guard against an upstream schema change or empty response: an
-          # empty set would spuriously flag every series as drift.
-          if [ -z "$expected" ]; then
-            echo "endoflife.date returned no live GHC series; aborting" >&2
-            exit 1
-          fi
+          matrix_series() {
+            yq '.jobs.build.strategy.matrix.ghc[]' \
+              .github/workflows/ci.yml | sort -V || true
+          }
 
-          matrix=$(yq '.jobs.build.strategy.matrix.ghc[]' \
-            .github/workflows/ci.yml | sort -V)
+          tested_with_series() {
+            grep -oE 'GHC == [0-9]+\.[0-9]+' siren-json.cabal \
+              | grep -oE '[0-9]+\.[0-9]+' | sort -V || true
+          }
 
-          tested=$(grep -oE 'GHC == [0-9]+\.[0-9]+' siren-json.cabal \
-            | grep -oE '[0-9]+\.[0-9]+' | sort -V)
+          # An empty set means an upstream schema change, a moved field, or
+          # a renamed file — never a real answer. Abort rather than call
+          # every series drifted.
+          require_series() {
+            if [ -z "$2" ]; then
+              echo "no GHC series parsed from $1; aborting" >&2
+              exit 1
+            fi
+          }
 
-          # An empty set on either side means a parse failure or a moved
-          # field; abort rather than file a spurious drift issue.
-          if [ -z "$matrix" ] || [ -z "$tested" ]; then
-            echo "could not parse the CI matrix or tested-with; aborting" >&2
-            exit 1
-          fi
+          as_csv() { printf '%s' "$1" | paste -sd, -; }
+
+          expected=$(upstream_series)
+          require_series "endoflife.date" "$expected"
+
+          matrix=$(matrix_series)
+          require_series ".github/workflows/ci.yml" "$matrix"
+
+          tested=$(tested_with_series)
+          require_series "siren-json.cabal tested-with" "$tested"
 
           drift=false
           [ "$expected" = "$matrix" ] || drift=true
           [ "$expected" = "$tested" ] || drift=true
           echo "drift=$drift" >> "$GITHUB_OUTPUT"
 
-          join() { printf '%s' "$1" | paste -sd, -; }
+          [ "$drift" = true ] || exit 0
+
           # create-an-issue reads the title and labels from front matter.
-          {
-            echo "---"
-            echo "title: GHC version matrix out of date"
-            echo "labels:"
-            echo "  - infrastructure"
-            echo "---"
-            echo "The CI matrix and \`tested-with\` should track every GHC major"
-            echo "series upstream hasn't end-of-lifed (policy:"
-            echo "alunduil/collection-json.hs#141)."
-            echo
-            echo "| Source | Series |"
-            echo "| --- | --- |"
-            echo "| Expected (endoflife.date, not end-of-life) | $(join "$expected") |"
-            echo "| CI matrix (\`.github/workflows/ci.yml\`) | $(join "$matrix") |"
-            echo "| \`tested-with\` (\`siren-json.cabal\`) | $(join "$tested") |"
-            echo
-            echo "Update the matrix and \`tested-with\`, then bump per PVP"
-            echo "(CI/packaging-only is a patch)."
-          } > ghc-drift-issue.md
+          cat > ghc-drift-issue.md <<EOF
+          ---
+          title: GHC version matrix out of date
+          labels:
+            - infrastructure
+          ---
+          The CI matrix and \`tested-with\` should track every GHC major
+          series upstream hasn't end-of-lifed (policy:
+          alunduil/collection-json.hs#141).
+
+          | Source | Series |
+          | --- | --- |
+          | Expected (endoflife.date, not end-of-life) | $(as_csv "$expected") |
+          | CI matrix (\`.github/workflows/ci.yml\`) | $(as_csv "$matrix") |
+          | \`tested-with\` (\`siren-json.cabal\`) | $(as_csv "$tested") |
+
+          Update the matrix and \`tested-with\`, then bump per PVP
+          (CI/packaging-only is a patch).
+          EOF
 
       # update_existing overwrites the open tracking issue with the same
       # title rather than filing a duplicate, and files a fresh one only
