@@ -12,7 +12,7 @@ module Data.SirenJSONSpec (main, spec) where
 
 import Data.Aeson (decode, encode)
 import Data.Maybe (fromJust, isJust)
-import Network.URI (parseURIReference)
+import Network.URI (parseURI)
 import Test.Hspec (context, describe, hspec, it, shouldBe, Spec)
 import Test.Hspec.QuickCheck (modifyMaxSize, prop)
 import Test.Invariant ((<=>))
@@ -45,6 +45,11 @@ spec =
 
             it "SubEntity_EmbeddedLink" $
               (decode mSubEntity_EmbeddedLink :: Maybe SubEntity) `shouldBe` Just (EmbeddedLink (Link [] [] eURI Nothing Nothing))
+
+       describe "href" $
+         context "decode absolute URIs only" $
+           do it "Link"   $ (decode mLink_RelativeHref   :: Maybe Link)   `shouldBe` Nothing
+              it "Action" $ (decode mAction_RelativeHref :: Maybe Action) `shouldBe` Nothing
 
        describe "JSON Missing Keys" $
          do context "decode minimal JSON strings" $
@@ -80,5 +85,8 @@ spec =
         mLink                             = "{\"href\":\"http://example.com\",\"rel\":[]}" :: BL.ByteString
         mAction                           = "{\"href\":\"http://example.com\",\"name\":\"name\"}" :: BL.ByteString
         mField                            = "{\"name\":\"name\"}" :: BL.ByteString
-        
-        eURI = fromJust $ parseURIReference "http://example.com"
+
+        mLink_RelativeHref                = "{\"href\":\"/orders/42\",\"rel\":[]}" :: BL.ByteString
+        mAction_RelativeHref              = "{\"href\":\"/orders/42\",\"name\":\"name\"}" :: BL.ByteString
+
+        eURI = fromJust $ parseURI "http://example.com"

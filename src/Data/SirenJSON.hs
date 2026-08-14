@@ -23,7 +23,6 @@ import Data.Monoid ((<>))
 import Data.Text (Text)
 import Network.HTTP.Media (MediaType)
 import Network.HTTP.Types (StdMethod (GET))
-import Network.URI.JSON ()
 import Network.URI (URI)
 
 import qualified Data.Aeson.KeyMap as KeyMap (fromList)

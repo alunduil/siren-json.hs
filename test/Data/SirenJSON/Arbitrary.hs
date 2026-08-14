@@ -16,11 +16,17 @@ import Control.Applicative ((<$>), (<*>))
 import Data.Maybe (mapMaybe)
 import Network.HTTP.Media.MediaType.Arbitrary ()
 import Network.HTTP.Types.Method.Arbitrary ()
+import Network.URI (URI, uriIsAbsolute)
 import Network.URI.Arbitrary ()
-import Test.QuickCheck (Arbitrary (arbitrary, shrink), elements, oneof, scale)
+import Test.QuickCheck (Arbitrary (arbitrary, shrink), elements, Gen, oneof, scale, suchThat)
 import Test.QuickCheck.Instances ()
 
 import Data.SirenJSON
+
+-- | 'Data.SirenJSON' decodes @href@ as an absolute URI, but
+--   'Network.URI.Arbitrary' also generates relative references.
+absoluteURI :: Gen URI
+absoluteURI = arbitrary `suchThat` uriIsAbsolute
 
 instance Arbitrary Entity where
   arbitrary = Entity <$> arbitrary
@@ -51,22 +57,22 @@ instance Arbitrary SubEntity where
 instance Arbitrary Link where
   arbitrary = Link <$> arbitrary
                    <*> arbitrary
-                   <*> arbitrary
+                   <*> absoluteURI
                    <*> arbitrary
                    <*> arbitrary
 
-  shrink Link{..} = [ Link lClass' lRel' lHref' lType' lTitle' | (lClass', lRel', lHref', lType', lTitle') <- shrink (lClass, lRel, lHref, lType, lTitle) ]
+  shrink Link{..} = [ Link lClass' lRel' lHref' lType' lTitle' | (lClass', lRel', lHref', lType', lTitle') <- shrink (lClass, lRel, lHref, lType, lTitle), uriIsAbsolute lHref' ]
 
 instance Arbitrary Action where
   arbitrary = Action <$> arbitrary
                      <*> arbitrary
                      <*> arbitrary
-                     <*> arbitrary
+                     <*> absoluteURI
                      <*> arbitrary
                      <*> arbitrary
                      <*> arbitrary
 
-  shrink Action{..} = [ Action aName' aClass' aMethod' aHref' aTitle' aType' aFields' | (aName', aClass', aMethod', aHref', aTitle', aType', aFields') <- shrink (aName, aClass, aMethod, aHref, aTitle, aType, aFields) ]
+  shrink Action{..} = [ Action aName' aClass' aMethod' aHref' aTitle' aType' aFields' | (aName', aClass', aMethod', aHref', aTitle', aType', aFields') <- shrink (aName, aClass, aMethod, aHref, aTitle, aType, aFields), uriIsAbsolute aHref' ]
 
 instance Arbitrary Field where
   arbitrary = Field <$> arbitrary
