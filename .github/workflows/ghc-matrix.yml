@@ -26,19 +26,16 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       # Policy (alunduil/collection-json.hs#141): test every GHC major
-      # series upstream hasn't end-of-lifed (endoflife.date `eol: false`),
-      # so the matrix spans the full still-alive range rather than a
-      # hardcoded count.
+      # series upstream has not end-of-lifed.
       - name: Detect drift
         id: check
         run: |
           set -euo pipefail
 
-          # Three sources each name a set of GHC major series. Every query
-          # yields one series per line, sorted, so they compare as strings.
-          # Each ends in `|| true` so a failure surfaces as an empty set for
-          # require_series to name, rather than killing the step under
-          # `set -e` with only the underlying tool's stderr to go on.
+          # Each query yields one series per line, sorted, so the sets
+          # compare as strings. `|| true` turns a failed query into an empty
+          # set for require_series to report; without it `set -e` kills the
+          # step before the guard runs.
           upstream_series() {
             curl -fsSL https://endoflife.date/api/ghc.json \
               | jq -r 'map(select(.eol == false)) | .[].cycle' | sort -V || true
@@ -54,9 +51,9 @@ jobs:
               | grep -oE '[0-9]+\.[0-9]+' | sort -V || true
           }
 
-          # An empty set means an upstream schema change, a moved field, or
-          # a renamed file — never a real answer. Abort rather than call
-          # every series drifted.
+          # An empty set means a schema change, a moved field, or a renamed
+          # file. Aborting keeps that from filing an issue that reports
+          # every series as drifted.
           require_series() {
             if [ -z "$2" ]; then
               echo "no GHC series parsed from $1; aborting" >&2
@@ -103,9 +100,8 @@ jobs:
           (CI/packaging-only is a patch).
           EOF
 
-      # update_existing overwrites the open tracking issue with the same
-      # title rather than filing a duplicate, and files a fresh one only
-      # when none is open. Title and labels come from the front matter above.
+      # update_existing overwrites the open issue with the same title, so a
+      # standing drift issue is refreshed instead of duplicated every week.
       - name: File or refresh drift issue
         if: steps.check.outputs.drift == 'true'
         uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2

@@ -33,12 +33,10 @@ jobs:
     timeout-minutes: 30
 
     env:
-      # The test-only network-arbitrary caps base < 4.21 (no GHC 9.12+) and
-      # lags QuickCheck. Its main has the fix but is unreleased
-      # (alunduil/network-arbitrary#106), so relax those two bounds for that
-      # one package; the library's own published bounds stay strictly
-      # enforced. Deleting this entry removes the stopgap — the build steps
-      # expand it to nothing.
+      # Stopgap: the test-only network-arbitrary 1.0.0.1 caps base < 4.21,
+      # excluding GHC 9.12 and 9.14, and lags QuickCheck. Scoped to that one
+      # package so the library's own bounds stay enforced. Delete once
+      # alunduil/network-arbitrary#106 ships.
       ALLOW_NEWER: --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
 
     strategy:
@@ -62,9 +60,8 @@ jobs:
         run: cabal update
 
       # Everything below builds from the sdist tarball, not the working
-      # tree: it exercises the bare published bounds a Hackage consumer
-      # faces and validates that every source and test file is packaged.
-      # ALLOW_NEWER above is the one relaxation.
+      # tree: it exercises the published bounds a Hackage consumer faces
+      # and catches a source or test file missing from the package.
       - name: Build sdist
         run: cabal sdist all
 
