@@ -13,14 +13,25 @@ Arbitrary instances for "Data.SirenJSON".
 module Data.SirenJSON.Arbitrary where
 
 import Control.Applicative ((<$>), (<*>))
-import Data.Maybe (mapMaybe)
+import Data.Maybe (isJust, mapMaybe)
 import Network.HTTP.Media.MediaType.Arbitrary ()
 import Network.HTTP.Types.Method.Arbitrary ()
+import Network.URI (URI, parseURI, uriToString)
 import Network.URI.Arbitrary ()
-import Test.QuickCheck (Arbitrary (arbitrary, shrink), elements, oneof, scale)
+import Test.QuickCheck (Arbitrary (arbitrary, shrink), elements, Gen, oneof, scale, suchThat)
 import Test.QuickCheck.Instances ()
 
 import Data.SirenJSON
+
+-- | 'Network.URI.Arbitrary' generates URI references, half of them without a
+--   scheme, but 'Data.SirenJSON' decodes @href@ as an absolute URI.
+absoluteURI :: Gen URI
+absoluteURI = arbitrary `suchThat` isAbsolute
+
+-- | Mirrors the round trip @href@ makes through aeson: rendered by 'toJSON'
+--   with 'uriToString', read back by 'parseJSON' with 'parseURI'.
+isAbsolute :: URI -> Bool
+isAbsolute = isJust . parseURI . flip (uriToString id) ""
 
 instance Arbitrary Entity where
   arbitrary = Entity <$> arbitrary
@@ -51,22 +62,22 @@ instance Arbitrary SubEntity where
 instance Arbitrary Link where
   arbitrary = Link <$> arbitrary
                    <*> arbitrary
-                   <*> arbitrary
+                   <*> absoluteURI
                    <*> arbitrary
                    <*> arbitrary
 
-  shrink Link{..} = [ Link lClass' lRel' lHref' lType' lTitle' | (lClass', lRel', lHref', lType', lTitle') <- shrink (lClass, lRel, lHref, lType, lTitle) ]
+  shrink Link{..} = [ Link lClass' lRel' lHref' lType' lTitle' | (lClass', lRel', lHref', lType', lTitle') <- shrink (lClass, lRel, lHref, lType, lTitle), isAbsolute lHref' ]
 
 instance Arbitrary Action where
   arbitrary = Action <$> arbitrary
                      <*> arbitrary
                      <*> arbitrary
-                     <*> arbitrary
+                     <*> absoluteURI
                      <*> arbitrary
                      <*> arbitrary
                      <*> arbitrary
 
-  shrink Action{..} = [ Action aName' aClass' aMethod' aHref' aTitle' aType' aFields' | (aName', aClass', aMethod', aHref', aTitle', aType', aFields') <- shrink (aName, aClass, aMethod, aHref, aTitle, aType, aFields) ]
+  shrink Action{..} = [ Action aName' aClass' aMethod' aHref' aTitle' aType' aFields' | (aName', aClass', aMethod', aHref', aTitle', aType', aFields') <- shrink (aName, aClass, aMethod, aHref, aTitle, aType, aFields), isAbsolute aHref' ]
 
 instance Arbitrary Field where
   arbitrary = Field <$> arbitrary

@@ -10,8 +10,16 @@ and this project adheres to the
 
 ### Changed
 
-- Update dependencies: base, aeson, http-media, network-uri-json,
-  network-arbitrary, hspec, and QuickCheck.
+- Update dependencies: base, aeson, http-media, network-arbitrary, hspec, and
+  QuickCheck.
+- Require aeson >= 2.2, which supplies the `Network.URI.URI` JSON instances.
+- Decode `href` as an absolute URI. Siren defines `href` as a URI, and aeson's
+  instance accepts absolute URIs only, so relative URI references that
+  previously decoded are now rejected.
+
+### Removed
+
+- Remove the `network-uri-json` dependency.
 
 ## [0.3.1.1] - 2019-02-18
 
