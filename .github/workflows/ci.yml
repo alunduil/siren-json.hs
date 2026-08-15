@@ -26,3 +26,89 @@ jobs:
       # SHA pinning is enforced transitively, so a replacement must pin the
       # actions it calls in turn.
       - uses: tox-dev/action-pre-commit-uv@e09b8958484dfe71f4ac3bc7afb230ba506402ec # v1.0.5
+
+  build:
+    name: GHC ${{ matrix.ghc }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+
+    env:
+      # Stopgap: the test-only network-arbitrary 1.0.0.1 caps base < 4.21,
+      # excluding GHC 9.12 and 9.14, and lags QuickCheck. Scoped to that one
+      # package so the library's own bounds stay enforced. Delete once
+      # alunduil/network-arbitrary#106 ships.
+      ALLOW_NEWER: --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        ghc: ["9.6", "9.8", "9.10", "9.12", "9.14"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up GHC ${{ matrix.ghc }}
+        id: setup
+        uses: haskell-actions/setup@6037f33647c3f17758a2356c80fc4a53d7e0685d # v2.12.0
+        with:
+          ghc-version: ${{ matrix.ghc }}
+          cabal-version: latest
+
+      - name: Update Hackage index
+        run: cabal update
+
+      # Everything below builds from the sdist tarball, not the working
+      # tree: it exercises the published bounds a Hackage consumer faces
+      # and catches a source or test file missing from the package.
+      - name: Build sdist
+        run: cabal sdist all
+
+      - name: Unpack sdist
+        shell: bash
+        run: |
+          mkdir sdist-build
+          tar xf dist-newstyle/sdist/siren-json-*.tar.gz \
+            -C sdist-build --strip-components=1
+
+      - name: Generate build plan
+        working-directory: sdist-build
+        run: cabal build all --enable-tests --dry-run $ALLOW_NEWER
+
+      - name: Restore cabal store
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        env:
+          key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-cabal-${{ steps.setup.outputs.cabal-version }}
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ env.key }}-plan-${{ hashFiles('sdist-build/dist-newstyle/cache/plan.json') }}
+          restore-keys: ${{ env.key }}-
+
+      - name: Install dependencies
+        working-directory: sdist-build
+        run: cabal build all --enable-tests --only-dependencies $ALLOW_NEWER
+
+      - name: Save cabal store
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+
+      - name: Build
+        working-directory: sdist-build
+        run: cabal build all --enable-tests $ALLOW_NEWER
+
+      - name: Test
+        working-directory: sdist-build
+        run: cabal test all --enable-tests --test-show-details=direct $ALLOW_NEWER
+
+      - name: Check package metadata
+        working-directory: sdist-build
+        run: cabal check
+
+      - name: Haddock
+        working-directory: sdist-build
+        run: cabal haddock all $ALLOW_NEWER

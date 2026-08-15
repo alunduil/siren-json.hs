@@ -17,9 +17,7 @@ module Data.SirenJSON where
 
 import Data.Aeson ((.=), (.:?), (.!=), (.:), FromJSON (parseJSON), Object, object, ToJSON (toJSON), Value (Object, String), withObject, withText)
 import Data.Foldable (asum)
-import Data.Functor ((<$>))
 import Data.Maybe (catMaybes)
-import Data.Monoid ((<>))
 import Data.Text (Text)
 import Network.HTTP.Media (MediaType)
 import Network.HTTP.Types (StdMethod (GET))
