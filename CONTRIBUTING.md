@@ -56,11 +56,15 @@ like attribution, add yourself there.
 ## Releasing (maintainers)
 
 Releases go to [Hackage](https://hackage.haskell.org/package/siren-json) by
-hand. Bump the version in `siren-json.cabal`, move the `Unreleased` changelog
-entries under the new version, tag the commit, then build and upload the
-tarball with a maintainer's Hackage credentials:
+hand.
 
-```sh
-cabal sdist
-cabal upload --publish dist-newstyle/sdist/siren-json-<version>.tar.gz
-```
+1. Bump `version` in `siren-json.cabal`.
+2. In `CHANGELOG.md`, move the `Unreleased` entries under the new version and
+   add its compare link.
+3. Tag and publish:
+
+   ```sh
+   git tag <version> && git push origin <version>
+   cabal sdist
+   cabal upload --publish dist-newstyle/sdist/siren-json-<version>.tar.gz
+   ```

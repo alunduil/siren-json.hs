@@ -11,15 +11,15 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 
 - Build / test: `cabal build`, `cabal test` (hspec + hspec-discover;
   suite `siren-json-tests` in `test/`).
-- Publish: manual. A maintainer runs `cabal sdist` and `cabal upload --publish`
-  against Hackage; there is no automated release path in the repo.
+- Publish: manual, by a maintainer — `cabal sdist` then `cabal upload
+  --publish`. Steps in `CONTRIBUTING.md`.
 - Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`, next milestone
   `1.0.0.0`.
 - Dependency updates: Renovate (`renovate.json`).
 - Lint: `pre-commit run --all-files` — only `renovate-config-validator`
   (`--strict --no-global`); Haskell files are unhooked.
-- CI: `.github/workflows/ci.yml` runs pre-commit and the GHC matrix (9.6–9.14 ×
-  Linux/macOS, built from the sdist tarball). Workflow files are named for
+- CI: `.github/workflows/ci.yml` runs pre-commit and the GHC matrix on Linux and
+  macOS, building from the sdist tarball. Workflow files are named for
   *when* they run, not the tool (alunduil-chezmoi ADR 0004), so always-on
   sensors become jobs in `ci.yml` rather than new files. Sibling Haskell repos
   still use the older per-tool `pre-commit.yml` layout.
