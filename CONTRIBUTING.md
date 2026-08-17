@@ -55,8 +55,12 @@ like attribution, add yourself there.
 
 ## Releasing (maintainers)
 
-Releases publish to [Hackage](https://hackage.haskell.org/package/siren-json)
-automatically. Pushing a version tag triggers Cloud Build (`cloudbuild.yaml`),
-which KMS-decrypts the Hackage credentials, builds an sdist, and runs
-`cabal upload --publish`. Do not run the publish path by hand or decrypt the
-credentials locally.
+Releases go to [Hackage](https://hackage.haskell.org/package/siren-json) by
+hand. Bump the version in `siren-json.cabal`, move the `Unreleased` changelog
+entries under the new version, tag the commit, then build and upload the
+tarball with a maintainer's Hackage credentials:
+
+```sh
+cabal sdist
+cabal upload --publish dist-newstyle/sdist/siren-json-<version>.tar.gz
+```
