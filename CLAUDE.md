@@ -14,7 +14,10 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 - Publish: `.github/workflows/release.yml`. A `version:` change merged to `main`
   uploads a Hackage candidate; promoting it is a manual `workflow_dispatch`,
   because a publish is immutable. Tags are written by the publish job as a
-  record and trigger nothing. Steps in `CONTRIBUTING.md`.
+  record and trigger nothing. Steps in `CONTRIBUTING.md`. The build sequence
+  both jobs share is the composite action in
+  `.github/actions/build-release-artifacts/`, kept single so the artifact
+  reviewed as a candidate is built the same way as the one published.
 - Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`, next milestone
   `1.0.0.0`.
 - Dependency updates: Renovate (`renovate.json`).

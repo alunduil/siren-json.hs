@@ -55,6 +55,11 @@ jobs:
         run: |
           set -euo pipefail
 
+          # git reports an all-zero SHA when a push has no prior state.
+          readonly NO_PRIOR_STATE=0000000000000000000000000000000000000000
+
+          # Reads from stdin rather than a path because the two trees being
+          # compared arrive differently: one from disk, one from `git show`.
           cabal_version() { grep -i '^version:' | awk '{print $2}'; }
 
           # An empty parse means the field moved or the file was renamed.
@@ -70,8 +75,7 @@ jobs:
           require_version "siren-json.cabal" "$current"
           echo "version=$current" >> "$GITHUB_OUTPUT"
 
-          # Zeroes mean main had no prior state; nothing to compare against.
-          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+          if [ "$BEFORE" = "$NO_PRIOR_STATE" ]; then
             echo "::error::no before-SHA for this push; cannot tell if the version moved" >&2
             exit 1
           fi
@@ -99,20 +103,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Set up GHC
-        uses: haskell-actions/setup@6037f33647c3f17758a2356c80fc4a53d7e0685d # v2.12.0
-        with:
-          ghc-version: latest
-          cabal-version: latest
-
-      - name: Update Hackage index
-        run: cabal update
-
-      - name: Build sdist
-        run: cabal sdist
-
-      - name: Build documentation
-        run: cabal haddock --haddock-for-hackage
+      - name: Build release artifacts
+        uses: ./.github/actions/build-release-artifacts
 
       # `cabal upload` reads --token; HACKAGE_KEY is stack's variable and does
       # nothing here, leaving cabal to prompt for a password and fail.
@@ -160,26 +152,16 @@ jobs:
         run: |
           set -euo pipefail
 
-          declared=$(grep -i '^version:' siren-json.cabal | awk '{print $2}')
+          cabal_version() { grep -i '^version:' | awk '{print $2}'; }
+
+          declared=$(cabal_version < siren-json.cabal)
           if [ "$declared" != "$VERSION" ]; then
             echo "::error::asked to publish $VERSION but this ref declares ${declared:-nothing}; re-run from the ref that bumped it" >&2
             exit 1
           fi
 
-      - name: Set up GHC
-        uses: haskell-actions/setup@6037f33647c3f17758a2356c80fc4a53d7e0685d # v2.12.0
-        with:
-          ghc-version: latest
-          cabal-version: latest
-
-      - name: Update Hackage index
-        run: cabal update
-
-      - name: Build sdist
-        run: cabal sdist
-
-      - name: Build documentation
-        run: cabal haddock --haddock-for-hackage
+      - name: Build release artifacts
+        uses: ./.github/actions/build-release-artifacts
 
       - name: Publish sdist
         env:
