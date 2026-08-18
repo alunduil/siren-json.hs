@@ -55,31 +55,23 @@ like attribution, add yourself there.
 
 ## Releasing (maintainers)
 
-Releases go to [Hackage](https://hackage.haskell.org/package/siren-json) in two
-stages. The `Release` workflow
+A [Hackage](https://hackage.haskell.org/package/siren-json) release happens in
+two stages, because a published version cannot be undone or replaced, only
+deprecated. The `Release` workflow
 ([`.github/workflows/release.yml`](.github/workflows/release.yml)) uploads a
-candidate on its own; promoting that candidate to an immutable published
-version stays a deliberate manual step.
+candidate for you; publishing it is manual.
 
 1. Open a pull request bumping `version` in `siren-json.cabal` and moving the
    `CHANGELOG.md` `Unreleased` entries under the new version, with its compare
-   link. Review this pull request carefully — it is the only gate before the
-   candidate goes up.
-2. Merging it to `main` triggers the `candidate` job, which builds the sdist and
-   Haddock and uploads both to Hackage as a candidate. A merge that leaves
-   `version` untouched is a no-op.
-3. Review the rendered result at
-   `https://hackage.haskell.org/package/siren-json-<version>/candidate` —
-   metadata, module list, and Haddock all render from the tarball that was
-   uploaded.
-4. Publish by running the `Release` workflow manually from the merge commit,
-   passing the same version as the `version` input. The `publish` job refuses to
-   run if the ref it is dispatched from declares a different version. On
-   success it tags the commit, which is what the `CHANGELOG.md` compare links
-   resolve against.
-
-A Hackage publish cannot be undone or replaced, only deprecated, which is why
-step 4 is not automatic.
+   link. Review it carefully — it is the last gate before the candidate goes up.
+2. Merge it to `main`. A merge that leaves `version` untouched uploads nothing.
+3. Review the candidate at
+   `https://hackage.haskell.org/package/siren-json-<version>/candidate`. The
+   metadata, module list, and rendered Haddock there come from the uploaded
+   tarball, so this is the last chance to catch a packaging mistake.
+4. Run the `Release` workflow manually from the merge commit, passing that
+   version as the `version` input. It refuses to run against a ref declaring a
+   different version, and tags the commit once Hackage accepts the upload.
 
 Both jobs read `HACKAGE_TOKEN` from the `hackage` environment. Generate the
 token under "Edit auth tokens" on the Hackage account management page.

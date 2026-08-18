@@ -1,16 +1,10 @@
 name: Build release artifacts
 description: >-
-  Build the sdist and Haddock tarballs a Hackage upload consumes, leaving them
-  under dist-newstyle for the caller to upload.
+  Build the sdist and Haddock tarballs under dist-newstyle for a caller to
+  upload to Hackage.
 
-# Shared by the candidate and publish jobs so the two cannot drift apart. They
-# build the artifact that gets reviewed and the artifact that gets published
-# respectively, and a publish is immutable, so any difference between the two
-# build sequences ships something nobody looked at.
-#
-# Deliberately takes no `publish` flag. The only difference between the two
-# callers is the `--publish` argument to `cabal upload`, and that stays at the
-# call site where the reader can see which one they are getting.
+# The candidate and publish jobs have to build identically. A publish is
+# immutable, so if they diverge the bytes that ship are not the ones reviewed.
 
 runs:
   using: composite

@@ -1,10 +1,8 @@
 name: Release
 
-# Fires on a version bump landing in main, not on a tag. A tag pushed by
-# GITHUB_TOKEN does not trigger a workflow, so tag-driven releases need a PAT
-# or GitHub App token held outside this repo; keying off the merge avoids that
-# dependency entirely (alunduil/collection-json.hs#161). The version-bump pull
-# request is the human gate for the candidate.
+# A tag pushed by GITHUB_TOKEN triggers no workflow, so releasing from a tag
+# would need a PAT or GitHub App token provisioned outside this repo. Keying
+# off the version bump keeps the credentials this needs local.
 
 on:
   push:
@@ -26,8 +24,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Split from the upload so the condition lives on the job rather than on
-  # every step, and so the job doing the inspection never reaches the token.
+  # Declares no hackage environment, so deciding whether to release cannot
+  # reach the token.
   guard:
     name: Check whether the version changed
     if: github.event_name == 'push'
@@ -42,12 +40,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          # The check reads the cabal file as of before the push.
+          # `git show "$BEFORE:..."` below needs history, not just the tip.
           fetch-depth: 0
 
-      # The paths filter narrows to pushes touching the cabal file; this
-      # narrows further to pushes that actually move `version:`, so edits to
-      # bounds or metadata don't attempt an upload.
+      # The paths filter still admits edits to bounds or metadata. Only a
+      # moved `version:` should reach Hackage.
       - name: Compare version against the pre-push tree
         id: check
         env:
@@ -58,12 +55,11 @@ jobs:
           # git reports an all-zero SHA when a push has no prior state.
           readonly NO_PRIOR_STATE=0000000000000000000000000000000000000000
 
-          # Reads from stdin rather than a path because the two trees being
-          # compared arrive differently: one from disk, one from `git show`.
+          # Takes stdin to serve both the working tree and `git show` output.
           cabal_version() { grep -i '^version:' | awk '{print $2}'; }
 
           # An empty parse means the field moved or the file was renamed.
-          # Aborting beats guessing, which would upload on every cabal edit.
+          # Guessing from that would upload on every cabal edit.
           require_version() {
             if [ -z "$2" ]; then
               echo "::error::no version parsed from $1" >&2
@@ -106,8 +102,8 @@ jobs:
       - name: Build release artifacts
         uses: ./.github/actions/build-release-artifacts
 
-      # `cabal upload` reads --token; HACKAGE_KEY is stack's variable and does
-      # nothing here, leaving cabal to prompt for a password and fail.
+      # cabal reads --token. HACKAGE_KEY is stack's variable and would leave
+      # cabal prompting for a password.
       - name: Upload sdist as candidate
         env:
           HACKAGE_TOKEN: ${{ secrets.HACKAGE_TOKEN }}
@@ -137,15 +133,14 @@ jobs:
     environment: hackage
 
     permissions:
-      # Raised from the workflow-level read so this job alone can push the tag.
+      # Only this job pushes the tag.
       contents: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      # A Hackage publish is immutable, so confirm the dispatched ref declares
-      # the version being asked for rather than trusting the input alone.
+      # A Hackage publish is immutable, so a wrong ref cannot be taken back.
       - name: Verify the ref declares the requested version
         env:
           VERSION: ${{ inputs.version }}
@@ -177,8 +172,8 @@ jobs:
           cabal upload --publish --token "$HACKAGE_TOKEN" --documentation \
             dist-newstyle/*-docs.tar.gz
 
-      # The tag records what reached Hackage; it triggers nothing. CHANGELOG
-      # compare links resolve against these, so they stay bare versions.
+      # The `CHANGELOG.md` compare links resolve against these, so the tag
+      # stays a bare version. Nothing triggers on it.
       - name: Tag the published version
         env:
           VERSION: ${{ inputs.version }}
