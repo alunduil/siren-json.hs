@@ -11,8 +11,10 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 
 - Build / test: `cabal build`, `cabal test` (hspec + hspec-discover;
   suite `siren-json-tests` in `test/`).
-- Publish: manual, by a maintainer — `cabal sdist` then `cabal upload
-  --publish`. Steps in `CONTRIBUTING.md`.
+- Publish: `.github/workflows/release.yml`. A `version:` change merged to `main`
+  uploads a Hackage candidate; promoting it is a manual `workflow_dispatch`,
+  because a publish is immutable. Tags are written by the publish job as a
+  record and trigger nothing. Steps in `CONTRIBUTING.md`.
 - Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`, next milestone
   `1.0.0.0`.
 - Dependency updates: Renovate (`renovate.json`).

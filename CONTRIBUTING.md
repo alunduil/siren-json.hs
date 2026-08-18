@@ -55,16 +55,31 @@ like attribution, add yourself there.
 
 ## Releasing (maintainers)
 
-Releases go to [Hackage](https://hackage.haskell.org/package/siren-json) by
-hand.
+Releases go to [Hackage](https://hackage.haskell.org/package/siren-json) in two
+stages. The `Release` workflow
+([`.github/workflows/release.yml`](.github/workflows/release.yml)) uploads a
+candidate on its own; promoting that candidate to an immutable published
+version stays a deliberate manual step.
 
-1. Bump `version` in `siren-json.cabal`.
-2. In `CHANGELOG.md`, move the `Unreleased` entries under the new version and
-   add its compare link.
-3. Tag and publish:
+1. Open a pull request bumping `version` in `siren-json.cabal` and moving the
+   `CHANGELOG.md` `Unreleased` entries under the new version, with its compare
+   link. Review this pull request carefully — it is the only gate before the
+   candidate goes up.
+2. Merging it to `main` triggers the `candidate` job, which builds the sdist and
+   Haddock and uploads both to Hackage as a candidate. A merge that leaves
+   `version` untouched is a no-op.
+3. Review the rendered result at
+   `https://hackage.haskell.org/package/siren-json-<version>/candidate` —
+   metadata, module list, and Haddock all render from the tarball that was
+   uploaded.
+4. Publish by running the `Release` workflow manually from the merge commit,
+   passing the same version as the `version` input. The `publish` job refuses to
+   run if the ref it is dispatched from declares a different version. On
+   success it tags the commit, which is what the `CHANGELOG.md` compare links
+   resolve against.
 
-   ```sh
-   git tag <version> && git push origin <version>
-   cabal sdist
-   cabal upload --publish dist-newstyle/sdist/siren-json-<version>.tar.gz
-   ```
+A Hackage publish cannot be undone or replaced, only deprecated, which is why
+step 4 is not automatic.
+
+Both jobs read `HACKAGE_TOKEN` from the `hackage` environment. Generate the
+token under "Edit auth tokens" on the Hackage account management page.

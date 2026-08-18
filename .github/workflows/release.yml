@@ -1,0 +1,207 @@
+name: Release
+
+# Fires on a version bump landing in main, not on a tag. A tag pushed by
+# GITHUB_TOKEN does not trigger a workflow, so tag-driven releases need a PAT
+# or GitHub App token held outside this repo; keying off the merge avoids that
+# dependency entirely (alunduil/collection-json.hs#161). The version-bump pull
+# request is the human gate for the candidate.
+
+on:
+  push:
+    branches: [main]
+    paths: ["siren-json.cabal"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish; must already be a Hackage candidate. Run this from the ref that declares it."
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  # An upload in flight is never worth cancelling.
+  cancel-in-progress: false
+
+jobs:
+  # Split from the upload so the condition lives on the job rather than on
+  # every step, and so the job doing the inspection never reaches the token.
+  guard:
+    name: Check whether the version changed
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+      version: ${{ steps.check.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # The check reads the cabal file as of before the push.
+          fetch-depth: 0
+
+      # The paths filter narrows to pushes touching the cabal file; this
+      # narrows further to pushes that actually move `version:`, so edits to
+      # bounds or metadata don't attempt an upload.
+      - name: Compare version against the pre-push tree
+        id: check
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+
+          cabal_version() { grep -i '^version:' | awk '{print $2}'; }
+
+          # An empty parse means the field moved or the file was renamed.
+          # Aborting beats guessing, which would upload on every cabal edit.
+          require_version() {
+            if [ -z "$2" ]; then
+              echo "::error::no version parsed from $1" >&2
+              exit 1
+            fi
+          }
+
+          current=$(cabal_version < siren-json.cabal)
+          require_version "siren-json.cabal" "$current"
+          echo "version=$current" >> "$GITHUB_OUTPUT"
+
+          # Zeroes mean main had no prior state; nothing to compare against.
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "::error::no before-SHA for this push; cannot tell if the version moved" >&2
+            exit 1
+          fi
+
+          previous=$(git show "$BEFORE:siren-json.cabal" | cabal_version)
+          require_version "siren-json.cabal at $BEFORE" "$previous"
+
+          if [ "$current" = "$previous" ]; then
+            echo "version unchanged at $current; nothing to release"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "version moved $previous -> $current"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  candidate:
+    name: Upload Hackage candidate
+    needs: guard
+    if: needs.guard.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: hackage
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up GHC
+        uses: haskell-actions/setup@6037f33647c3f17758a2356c80fc4a53d7e0685d # v2.12.0
+        with:
+          ghc-version: latest
+          cabal-version: latest
+
+      - name: Update Hackage index
+        run: cabal update
+
+      - name: Build sdist
+        run: cabal sdist
+
+      - name: Build documentation
+        run: cabal haddock --haddock-for-hackage
+
+      # `cabal upload` reads --token; HACKAGE_KEY is stack's variable and does
+      # nothing here, leaving cabal to prompt for a password and fail.
+      - name: Upload sdist as candidate
+        env:
+          HACKAGE_TOKEN: ${{ secrets.HACKAGE_TOKEN }}
+        run: cabal upload --token "$HACKAGE_TOKEN" dist-newstyle/sdist/*.tar.gz
+
+      - name: Upload documentation as candidate
+        env:
+          HACKAGE_TOKEN: ${{ secrets.HACKAGE_TOKEN }}
+        run: |
+          cabal upload --token "$HACKAGE_TOKEN" --documentation \
+            dist-newstyle/*-docs.tar.gz
+
+      - name: Summarise
+        env:
+          VERSION: ${{ needs.guard.outputs.version }}
+        run: |
+          echo "Review the candidate, then run this workflow manually from this" \
+            "ref with version $VERSION to publish it:" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://hackage.haskell.org/package/siren-json-$VERSION/candidate" \
+            >> "$GITHUB_STEP_SUMMARY"
+
+  publish:
+    name: Publish to Hackage
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: hackage
+
+    permissions:
+      # Raised from the workflow-level read so this job alone can push the tag.
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # A Hackage publish is immutable, so confirm the dispatched ref declares
+      # the version being asked for rather than trusting the input alone.
+      - name: Verify the ref declares the requested version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          declared=$(grep -i '^version:' siren-json.cabal | awk '{print $2}')
+          if [ "$declared" != "$VERSION" ]; then
+            echo "::error::asked to publish $VERSION but this ref declares ${declared:-nothing}; re-run from the ref that bumped it" >&2
+            exit 1
+          fi
+
+      - name: Set up GHC
+        uses: haskell-actions/setup@6037f33647c3f17758a2356c80fc4a53d7e0685d # v2.12.0
+        with:
+          ghc-version: latest
+          cabal-version: latest
+
+      - name: Update Hackage index
+        run: cabal update
+
+      - name: Build sdist
+        run: cabal sdist
+
+      - name: Build documentation
+        run: cabal haddock --haddock-for-hackage
+
+      - name: Publish sdist
+        env:
+          HACKAGE_TOKEN: ${{ secrets.HACKAGE_TOKEN }}
+        run: |
+          cabal upload --publish --token "$HACKAGE_TOKEN" \
+            dist-newstyle/sdist/*.tar.gz
+
+      - name: Publish documentation
+        env:
+          HACKAGE_TOKEN: ${{ secrets.HACKAGE_TOKEN }}
+        run: |
+          cabal upload --publish --token "$HACKAGE_TOKEN" --documentation \
+            dist-newstyle/*-docs.tar.gz
+
+      # The tag records what reached Hackage; it triggers nothing. CHANGELOG
+      # compare links resolve against these, so they stay bare versions.
+      - name: Tag the published version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          git tag "$VERSION"
+          git push origin "$VERSION"
