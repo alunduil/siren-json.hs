@@ -18,8 +18,9 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 - Dependency updates: Renovate (`renovate.json`).
 - Lint: `pre-commit run --all-files` — only `renovate-config-validator`
   (`--strict --no-global`); Haskell files are unhooked.
-- CI: `.github/workflows/ci.yml` runs pre-commit and the GHC matrix on Linux and
-  macOS, building from the sdist tarball. Workflow files are named for
+- CI: `.github/workflows/ci.yml` runs pre-commit, the GHC matrix on Linux and
+  macOS building from the sdist tarball, and a coverage job that uploads to
+  Codecov (`codecov.yml`). Workflow files are named for
   *when* they run, not the tool (alunduil-chezmoi ADR 0004), so always-on
   sensors become jobs in `ci.yml` rather than new files. Sibling Haskell repos
   still use the older per-tool `pre-commit.yml` layout.
