@@ -146,15 +146,13 @@ jobs:
       - name: Test
         run: cabal test all --test-show-details=direct
 
-      # excludes mirrors Main plus every other-modules entry of
-      # siren-json-tests in siren-json.cabal. Nothing checks the two agree; a
-      # test module missing here lands in the coverage denominator.
+      # Test modules stay in the report and are dropped by the ignore glob in
+      # codecov.yml; hpc-codecov's own --exclude takes exact names only.
       - name: Generate coverage report
         id: report
         uses: 8c6794b6/hpc-codecov-action@f943f40733e5390825b12d72165cad991e44340c # v4.3.0
         with:
           target: cabal:siren-json-tests
-          excludes: Main,Data.SirenJSON.Arbitrary,Data.SirenJSON.Norm,Data.SirenJSONSpec,External.Network.HTTP.Media.MediaType.JSONSpec,External.Network.HTTP.Types.Method.JSONSpec
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0

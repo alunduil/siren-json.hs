@@ -27,11 +27,6 @@ cabal test
 
 Run both before opening a pull request.
 
-A new test module needs two registrations: `other-modules` in
-`siren-json.cabal`, and `excludes` in the coverage job of
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml). Miss the second and the
-module counts toward the coverage total.
-
 [pre-commit](https://pre-commit.com) validates `renovate.json` against
 Renovate's schema. The `CI` workflow
 ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same hooks,
