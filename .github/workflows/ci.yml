@@ -11,6 +11,13 @@ on:
 permissions:
   contents: read
 
+env:
+  # Stopgap: the test-only network-arbitrary 1.0.0.1 caps base < 4.21,
+  # excluding GHC 9.12 and 9.14, and lags QuickCheck. Scoped to that one
+  # package so the library's own bounds stay enforced. Delete once
+  # alunduil/network-arbitrary#106 ships.
+  ALLOW_NEWER: --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   # Cancel superseded PR runs; never cancel main so each commit completes.
@@ -31,13 +38,6 @@ jobs:
     name: GHC ${{ matrix.ghc }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
-
-    env:
-      # Stopgap: the test-only network-arbitrary 1.0.0.1 caps base < 4.21,
-      # excluding GHC 9.12 and 9.14, and lags QuickCheck. Scoped to that one
-      # package so the library's own bounds stay enforced. Delete once
-      # alunduil/network-arbitrary#106 ships.
-      ALLOW_NEWER: --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
 
     strategy:
       fail-fast: false
@@ -112,3 +112,51 @@ jobs:
       - name: Haddock
         working-directory: sdist-build
         run: cabal haddock all $ALLOW_NEWER
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up GHC
+        uses: haskell-actions/setup@6037f33647c3f17758a2356c80fc4a53d7e0685d # v2.12.0
+        with:
+          ghc-version: "9.14"
+          cabal-version: latest
+
+      - name: Update Hackage index
+        run: cabal update
+
+      # Builds from the working tree, not the sdist the build job uses: hpc
+      # writes .mix/.tix paths relative to the tree it compiled, and only
+      # those map onto the src/ paths Codecov reports against.
+      #
+      # configure persists its flags to cabal.project.local, so later steps
+      # inherit ALLOW_NEWER.
+      - name: Configure with coverage
+        run: cabal configure --enable-tests --enable-coverage $ALLOW_NEWER
+
+      - name: Build
+        run: cabal build all
+
+      - name: Test
+        run: cabal test all --test-show-details=direct
+
+      # Test modules stay in the report and are dropped by the ignore glob in
+      # codecov.yml; hpc-codecov's own --exclude takes exact names only.
+      - name: Generate coverage report
+        id: report
+        uses: 8c6794b6/hpc-codecov-action@f943f40733e5390825b12d72165cad991e44340c # v4.3.0
+        with:
+          target: cabal:siren-json-tests
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ steps.report.outputs.report }}
+          fail_ci_if_error: true

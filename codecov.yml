@@ -1,0 +1,14 @@
+# hpc-codecov reports every module in the .tix, the test suite included.
+# "test/**/*" would compile to a regex requiring a further slash, missing
+# test/Spec.hs.
+ignore:
+  - "test/**"
+
+coverage:
+  status:
+    project:
+      default:
+        threshold: 1%
+    patch:
+      default:
+        threshold: 1%
