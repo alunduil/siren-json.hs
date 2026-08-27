@@ -1,8 +1,5 @@
-# HLint configuration for siren-json.
-# Reference: https://github.com/ndmitchell/hlint#readme
-#
-# The dotted filename is what hlint auto-discovers; a plain `hlint.yaml` is
-# read only when passed with `-h` (see alunduil/collection-json.hs#309).
+# hlint auto-discovers this dotted filename. A plain `hlint.yaml` is read only
+# when passed with `-h`, so renaming it leaves every setting below inert.
 
 - arguments: [--color=auto]
 
@@ -14,9 +11,8 @@
 - functions:
     - {name: unsafePerformIO, within: []}
 
-# Both partial calls in the test suite have their arguments fixed at the call
-# site: a hard-coded literal URI passed to fromJust, and a literal divisor of
-# 2 in a QuickCheck size scale. Neither can reach its failing case.
+# Both partial calls take a literal -- a hard-coded URI to fromJust, a divisor
+# of 2 to a QuickCheck size scale -- so neither can reach its failing case.
 - ignore:
     name: Avoid partial function
     within:
