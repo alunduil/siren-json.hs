@@ -61,7 +61,7 @@ instance FromJSON Entity where
     eActions <- v .:? "actions" .!= []
     eTitle <- v .:? "title"
 
-    return Entity{..}
+    pure Entity{..}
 
 instance ToJSON Entity where
   toJSON Entity{..} =
@@ -92,7 +92,7 @@ instance FromJSON SubEntity where
           sEntity <- parseJSON (Object v)
           sRel <- v .: "rel"
 
-          return EmbeddedRepresentation{..}
+          pure EmbeddedRepresentation{..}
       ]
 
 instance ToJSON SubEntity where
@@ -126,7 +126,7 @@ instance FromJSON Link where
     lType <- v .:? "type"
     lTitle <- v .:? "title"
 
-    return Link{..}
+    pure Link{..}
 
 instance ToJSON Link where
   toJSON Link{..} =
@@ -161,7 +161,7 @@ instance FromJSON Action where
     aType <- v .:? "type"
     aFields <- v .:? "fields" .!= []
 
-    return Action{..}
+    pure Action{..}
 
 instance ToJSON Action where
   toJSON Action{..} =
@@ -172,7 +172,7 @@ instance ToJSON Action where
         , (.=) "method" <$> aMethod
         , Just $ "href" .= aHref
         , (.=) "title" <$> aTitle
-        , (.=) "type" <$> (show <$> aType)
+        , (.=) "type" . show <$> aType
         , if null aFields then Nothing else Just $ "fields" .= aFields
         ]
 
@@ -194,7 +194,7 @@ instance FromJSON Field where
     fValue <- v .:? "value"
     fTitle <- v .:? "title"
 
-    return Field{..}
+    pure Field{..}
 
 instance ToJSON Field where
   toJSON Field{..} =
@@ -231,25 +231,25 @@ data InputType
 
 instance FromJSON InputType where
   parseJSON = withText "InputType" $ \case
-    "hidden" -> return Hidden
-    "text" -> return Text
-    "search" -> return Search
-    "tel" -> return Tel
-    "url" -> return URL
-    "email" -> return Email
-    "password" -> return Password
-    "datetime" -> return DateTime
-    "date" -> return Date
-    "month" -> return Month
-    "week" -> return Week
-    "time" -> return Time
-    "datetime-local" -> return DateTimeLocal
-    "number" -> return Number
-    "range" -> return Range
-    "color" -> return Color
-    "checkbox" -> return CheckBox
-    "radio" -> return Radio
-    "file" -> return File
+    "hidden" -> pure Hidden
+    "text" -> pure Text
+    "search" -> pure Search
+    "tel" -> pure Tel
+    "url" -> pure URL
+    "email" -> pure Email
+    "password" -> pure Password
+    "datetime" -> pure DateTime
+    "date" -> pure Date
+    "month" -> pure Month
+    "week" -> pure Week
+    "time" -> pure Time
+    "datetime-local" -> pure DateTimeLocal
+    "number" -> pure Number
+    "range" -> pure Range
+    "color" -> pure Color
+    "checkbox" -> pure CheckBox
+    "radio" -> pure Radio
+    "file" -> pure File
     _ -> fail "invalid InputType"
 
 instance ToJSON InputType where

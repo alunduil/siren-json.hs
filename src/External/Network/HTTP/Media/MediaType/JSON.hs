@@ -16,7 +16,7 @@ import Data.Text (pack, unpack)
 import Network.HTTP.Media.MediaType (MediaType)
 
 instance FromJSON MediaType where
-  parseJSON = withText "MediaType" $ return . fromString . unpack
+  parseJSON = withText "MediaType" $ pure . fromString . unpack
 
 instance ToJSON MediaType where
   toJSON = toJSON . pack . show
