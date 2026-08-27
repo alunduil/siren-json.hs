@@ -1,6 +1,35 @@
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: check-yaml
+
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 44.40.0
     hooks:
       - id: renovate-config-validator
         args: [--strict, --no-global]
+
+  # fourmolu and hlint come from PATH -- the dev environment provides them,
+  # and CI installs them in the pre-commit job. Renovate's pre-commit manager
+  # tracks only third-party hooks carrying a `rev:`, so the pinned versions
+  # for these two live in `.github/workflows/ci.yml`.
+  - repo: local
+    hooks:
+      - id: fourmolu
+        name: fourmolu
+        entry: fourmolu --mode inplace
+        language: system
+        types: [haskell]
+      - id: hlint
+        name: hlint
+        entry: hlint
+        language: system
+        types: [haskell]

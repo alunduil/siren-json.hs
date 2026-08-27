@@ -16,8 +16,12 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 - Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`, next milestone
   `1.0.0.0`.
 - Dependency updates: Renovate (`renovate.json`).
-- Lint: `pre-commit run --all-files` — only `renovate-config-validator`
-  (`--strict --no-global`); Haskell files are unhooked.
+- Lint / format: `pre-commit run --all-files` — `fourmolu --mode inplace` and
+  `hlint` over the Haskell sources (config in `fourmolu.yaml` and
+  `.hlint.yaml`), `renovate-config-validator` (`--strict --no-global`), and
+  the whitespace/YAML hygiene set. Both Haskell hooks are `language: system`
+  and need `fourmolu` and `hlint` on PATH; CI's pre-commit job installs the
+  versions pinned in its `env:`.
 - CI: `.github/workflows/ci.yml` runs pre-commit, the GHC matrix on Linux and
   macOS building from the sdist tarball, and a coverage job that uploads to
   Codecov (`codecov.yml`). Workflow files are named for
