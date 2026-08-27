@@ -1,4 +1,4 @@
-{-|
+{- |
 Module      : External.Network.HTTP.Types.Method.JSONSpec
 Description : Tests for External.Network.HTTP.Types.Method.JSON
 Copyright   : (c) Alex Brandt, 2017
@@ -10,9 +10,9 @@ module External.Network.HTTP.Types.Method.JSONSpec (main, spec) where
 
 import Data.Aeson (decode, encode)
 import Data.Maybe (fromJust)
-import Network.HTTP.Types.Method.Arbitrary ()
 import Network.HTTP.Types.Method (StdMethod)
-import Test.Hspec (describe, hspec, Spec)
+import Network.HTTP.Types.Method.Arbitrary ()
+import Test.Hspec (Spec, describe, hspec)
 import Test.Hspec.QuickCheck (prop)
 import Test.Invariant ((<=>))
 

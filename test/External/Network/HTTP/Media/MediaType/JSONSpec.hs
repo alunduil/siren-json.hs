@@ -1,4 +1,4 @@
-{-|
+{- |
 Module      : External.Network.HTTP.Media.MediaType.JSONSpec
 Description : Tests for External.Network.HTTP.Media.MediaType.JSON
 Copyright   : (c) Alex Brandt, 2017
@@ -10,9 +10,9 @@ module External.Network.HTTP.Media.MediaType.JSONSpec (main, spec) where
 
 import Data.Aeson (decode, encode)
 import Data.Maybe (fromJust)
-import Network.HTTP.Media.MediaType.Arbitrary ()
 import Network.HTTP.Media.MediaType (MediaType)
-import Test.Hspec (describe, hspec, Spec)
+import Network.HTTP.Media.MediaType.Arbitrary ()
+import Test.Hspec (Spec, describe, hspec)
 import Test.Hspec.QuickCheck (prop)
 import Test.Invariant ((<=>))
 

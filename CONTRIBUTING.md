@@ -27,8 +27,10 @@ cabal test
 
 Run both before opening a pull request.
 
-[pre-commit](https://pre-commit.com) validates `renovate.json` against
-Renovate's schema. The `CI` workflow
+[pre-commit](https://pre-commit.com) formats the Haskell sources with
+[fourmolu](https://github.com/fourmolu/fourmolu), lints them with
+[hlint](https://github.com/ndmitchell/hlint), and validates `renovate.json`
+against Renovate's schema. The `CI` workflow
 ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same hooks,
 so a local install turns a review-time failure into a commit-time one.
 
@@ -37,6 +39,11 @@ pre-commit install            # install the git hook (one-off)
 pre-commit run --all-files    # run all hooks against the repo
 pre-commit autoupdate         # bump third-party hook revs
 ```
+
+Install `fourmolu` and `hlint` yourself — both hooks run whatever is on your
+PATH. Match the versions CI pins in the `pre-commit` job's `env:`. fourmolu
+formats differently between releases, so a mismatch leaves the hook rewriting
+files that CI then rejects.
 
 ## Pull requests
 

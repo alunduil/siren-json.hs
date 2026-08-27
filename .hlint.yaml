@@ -1,0 +1,20 @@
+# hlint auto-discovers this dotted filename. A plain `hlint.yaml` is read only
+# when passed with `-h`, so renaming it leaves every setting below inert.
+
+- arguments: [--color=auto]
+
+- group: {name: future, enabled: true}
+- group: {name: partial, enabled: true}
+- group: {name: partial-strict, enabled: true}
+
+# unsafePerformIO has no place in a pure data-modelling library.
+- functions:
+    - {name: unsafePerformIO, within: []}
+
+# Both partial calls take a literal -- a hard-coded URI to fromJust, a divisor
+# of 2 to a QuickCheck size scale -- so neither can reach its failing case.
+- ignore:
+    name: Avoid partial function
+    within:
+      - Data.SirenJSONSpec
+      - Data.SirenJSON.Arbitrary

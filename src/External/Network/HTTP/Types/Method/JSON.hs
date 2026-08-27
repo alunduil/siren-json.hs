@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-{-|
+{- |
 Module      : External.Network.HTTP.Types.Method.JSON
 Description : Method FromJSON and ToJSON Instances
 Copyright   : (c) Alex Brandt, 2017
@@ -16,7 +16,7 @@ import Data.Text.Encoding (decodeUtf8, encodeUtf8)
 import Network.HTTP.Types.Method (StdMethod, parseMethod, renderStdMethod)
 
 instance FromJSON StdMethod where
-  parseJSON = withText "StdMethod" $ either (fail . unpack) return . parseMethod . encodeUtf8
+  parseJSON = withText "StdMethod" $ either (fail . unpack) pure . parseMethod . encodeUtf8
 
 instance ToJSON StdMethod where
   toJSON = toJSON . decodeUtf8 . renderStdMethod
