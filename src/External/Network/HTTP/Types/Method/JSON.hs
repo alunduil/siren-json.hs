@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-{-|
+{- |
 Module      : External.Network.HTTP.Types.Method.JSON
 Description : Method FromJSON and ToJSON Instances
 Copyright   : (c) Alex Brandt, 2017
