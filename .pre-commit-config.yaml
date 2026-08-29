@@ -35,7 +35,8 @@ repos:
         args: [--strict, --no-global]
 
   # Renovate's pre-commit manager tracks only hooks carrying a `rev:`, so the
-  # pinned fourmolu and hlint versions live in `.github/workflows/ci.yml`.
+  # pinned fourmolu, hlint, and lychee versions live in
+  # `.github/workflows/ci.yml`.
   - repo: local
     hooks:
       - id: fourmolu
@@ -48,3 +49,12 @@ repos:
         entry: hlint
         language: system
         types: [haskell]
+
+      # --offline gates on the relative links, which break with the diff that
+      # renames their target. External URLs rot on their own schedule, so the
+      # links jobs own those.
+      - id: lychee
+        name: lychee
+        entry: lychee --config lychee.toml --offline
+        language: system
+        types: [markdown]

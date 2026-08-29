@@ -37,6 +37,8 @@ jobs:
       FOURMOLU_VERSION: "0.20.1.0"
       # renovate: datasource=github-releases depName=ndmitchell/hlint versioning=loose extractVersion=^v(?<version>.+)$
       HLINT_VERSION: "3.10"
+      # renovate: datasource=github-releases depName=lycheeverse/lychee extractVersion=^lychee-v(?<version>.+)$
+      LYCHEE_VERSION: "0.24.2"
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -54,6 +56,18 @@ jobs:
         uses: haskell-actions/hlint-setup@fe9cd1cd1af94a23900c06738e73f6ddb092966a # v2
         with:
           version: ${{ env.HLINT_VERSION }}
+
+      # The musl build is statically linked, so it runs wherever the hook does
+      # rather than tracking the runner image's GLIBC.
+      - name: Install lychee
+        run: |
+          archive=lychee-x86_64-unknown-linux-musl
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL -o /tmp/lychee.tar.gz \
+            "https://github.com/lycheeverse/lychee/releases/download/lychee-v${LYCHEE_VERSION}/${archive}.tar.gz"
+          tar xzf /tmp/lychee.tar.gz -C "$HOME/.local/bin" \
+            --strip-components=1 "${archive}/lychee"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       # SHA pinning is enforced transitively, so a replacement must pin the
       # actions it calls in turn.

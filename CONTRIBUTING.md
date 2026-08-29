@@ -54,9 +54,11 @@ Refresh Vale's style packages with `vale sync` after changing `Packages` in
 `.vale.ini`. They're checked in under `.vale/styles`, so the hook itself needs
 no network access.
 
-Check the Markdown's links with [lychee](https://lychee.cli.rs) before pushing:
-`lychee "./**/*.md"`. CI runs the same check. It needs the network, so
-pre-commit doesn't run it.
+Install [lychee](https://lychee.cli.rs) too. Its hook runs `--offline`, which
+checks the links pointing at files in this repository and skips the rest: a
+rename that
+strands a link fails the commit, and no third party's outage can. CI checks the
+external URLs, so run `lychee "./**/*.md"` before pushing if you added one.
 
 ## Pull requests
 
