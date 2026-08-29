@@ -1,14 +1,18 @@
-name: GHC matrix
+name: Weekly
+
+# These sensors watch state that changes without a commit. Nobody is waiting
+# on a scheduled run, so each reports through a tracking issue instead of
+# failing, refreshing the standing one rather than filing a new one weekly.
 
 on:
   workflow_dispatch:
   schedule:
+    # GitHub applies `timezone`, DST included, so this stays 18:00 local.
     - cron: "0 18 * * 5"
       timezone: "Europe/London"
 
 permissions:
   contents: read
-  # The drift check files a tracking issue when the matrix ages out.
   issues: write
 
 concurrency:
@@ -100,8 +104,6 @@ jobs:
           (CI/packaging-only is a patch).
           EOF
 
-      # update_existing overwrites the open issue with the same title, so a
-      # standing drift issue is refreshed instead of duplicated every week.
       - name: File or refresh drift issue
         if: steps.check.outputs.drift == 'true'
         uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
@@ -109,4 +111,52 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           filename: ghc-drift-issue.md
+          update_existing: true
+
+  links:
+    name: Check links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Restore lychee cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lycheecache
+          key: lychee-${{ github.sha }}
+          restore-keys: lychee-
+
+      - name: Check links
+        id: lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --config lychee.toml "./**/*.md"
+          fail: false
+
+      # create-an-issue reads the title and labels from front matter, which
+      # lychee's report has no way to carry.
+      - name: Compose broken-links issue
+        if: steps.lychee.outputs.exit_code != 0
+        run: |
+          set -euo pipefail
+
+          cat > broken-links-issue.md <<'EOF'
+          ---
+          title: Broken links detected
+          labels:
+            - documentation
+          ---
+          EOF
+          cat lychee/out.md >> broken-links-issue.md
+
+      - name: File or refresh broken-links issue
+        if: steps.lychee.outputs.exit_code != 0
+        uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          filename: broken-links-issue.md
           update_existing: true

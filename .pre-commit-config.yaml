@@ -1,3 +1,6 @@
+# `vale sync` writes .vale/styles/; only config/ under it is ours.
+exclude: ^\.vale/styles/(?!config/)
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -11,6 +14,26 @@ repos:
         args: ["--fix=lf"]
       - id: check-yaml
 
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.23.2
+    hooks:
+      - id: markdownlint-cli2
+        # The Contributor Covenant is boilerplate; restyling it to our rules
+        # forks it. .vale.ini exempts it for the same reason.
+        exclude: ^CODE_OF_CONDUCT\.md$
+
+  # Vale's documented setup pairs this with a `vale sync` hook. The styles
+  # are vendored, so there is nothing to fetch.
+  - repo: https://github.com/errata-ai/vale
+    rev: v3.19.0
+    hooks:
+      - id: vale
+        # Vale exits nonzero on an error-severity finding whatever this level
+        # is, so it only keeps the standing warnings and suggestions out of
+        # the failure output.
+        args: [--output=line, --minAlertLevel=error]
+        types: [markdown]
+
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 44.45.3
     hooks:
@@ -18,7 +41,8 @@ repos:
         args: [--strict, --no-global]
 
   # Renovate's pre-commit manager tracks only hooks carrying a `rev:`, so the
-  # pinned fourmolu and hlint versions live in `.github/workflows/ci.yml`.
+  # pinned fourmolu, hlint, and lychee versions live in
+  # `.github/workflows/ci.yml`.
   - repo: local
     hooks:
       - id: fourmolu
@@ -31,3 +55,12 @@ repos:
         entry: hlint
         language: system
         types: [haskell]
+
+      # --offline gates on the relative links, which break with the diff that
+      # renames their target. External URLs rot on their own schedule, so the
+      # weekly job owns those.
+      - id: lychee
+        name: lychee
+        entry: lychee --config lychee.toml --offline
+        language: system
+        types: [markdown]

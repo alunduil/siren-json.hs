@@ -1,0 +1,15 @@
+no_progress = true
+
+# Only the weekly job persists .lycheecache between runs; without that these
+# two do nothing there.
+cache = true
+max_cache_age = "1w"
+
+# A slow host isn't a dead link. Give it room to answer before the run
+# reports one.
+timeout = 20
+max_retries = 3
+retry_wait_time = 2
+
+# A 429 is rate limiting, not a dead link.
+accept = ["200..=299", "429"]
