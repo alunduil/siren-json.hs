@@ -1,7 +1,7 @@
 no_progress = true
 
-# Persisting .lycheecache between runs is the workflows' job; without that
-# these two do nothing.
+# Only the weekly job persists .lycheecache between runs; without that these
+# two do nothing there.
 cache = true
 max_cache_age = "1w"
 

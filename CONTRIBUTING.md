@@ -55,10 +55,10 @@ Refresh Vale's style packages with `vale sync` after changing `Packages` in
 no network access.
 
 Install [lychee](https://lychee.cli.rs) too. Its hook runs `--offline`, which
-checks the links pointing at files in this repository and skips the rest: a
-rename that
-strands a link fails the commit, and no third party's outage can. CI checks the
-external URLs, so run `lychee "./**/*.md"` before pushing if you added one.
+checks the links pointing at files in this repository and skips the rest, so a
+rename that strands a link fails the commit and no third party's outage can. A
+weekly job checks the external URLs and opens an issue for a dead one. Run
+`lychee "./**/*.md"` yourself to check a link sooner than that.
 
 ## Pull requests
 

@@ -52,7 +52,7 @@ repos:
 
       # --offline gates on the relative links, which break with the diff that
       # renames their target. External URLs rot on their own schedule, so the
-      # links jobs own those.
+      # weekly job owns those.
       - id: lychee
         name: lychee
         entry: lychee --config lychee.toml --offline
