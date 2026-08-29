@@ -1,14 +1,19 @@
-name: GHC matrix
+name: Weekly
+
+# Sensors that run on a cadence rather than on an integration event: they
+# watch state that changes without a commit. Each files a tracking issue
+# instead of failing, since nobody is waiting on the run.
 
 on:
   workflow_dispatch:
   schedule:
+    # Fridays 18:00 Europe/London. GitHub applies the timezone (and DST), so
+    # the report is waiting at 18:00 local year-round.
     - cron: "0 18 * * 5"
       timezone: "Europe/London"
 
 permissions:
   contents: read
-  # The drift check files a tracking issue when the matrix ages out.
   issues: write
 
 concurrency:
@@ -110,3 +115,49 @@ jobs:
         with:
           filename: ghc-drift-issue.md
           update_existing: true
+
+  links:
+    name: Check links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Restore lychee cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lycheecache
+          key: lychee-${{ github.sha }}
+          restore-keys: lychee-
+
+      # Link rot happens without a commit, so this sweep re-checks links the
+      # ci.yml job last saw when they still resolved. fail: false keeps the
+      # run green so the next step reports through an issue instead.
+      - name: Check links
+        id: lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --config lychee.toml --no-progress "./**/*.md"
+          fail: false
+
+      # lychee writes its Markdown report to lychee/out.md. Refresh the open
+      # tracking issue if one exists rather than filing a fresh duplicate every
+      # Friday; create-issue-from-file can't update, so drive gh directly.
+      - name: File or refresh broken-links issue
+        if: steps.lychee.outputs.exit_code != 0
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: Broken links detected
+        run: |
+          number=$(gh api "repos/${{ github.repository }}/issues" \
+            --method GET -f state=open -f labels=documentation \
+            --jq "map(select(.title == \"$TITLE\")) | .[0].number // empty")
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --body-file lychee/out.md
+            echo "Refreshed existing issue #$number"
+          else
+            gh issue create --title "$TITLE" --label documentation \
+              --body-file lychee/out.md
+          fi
