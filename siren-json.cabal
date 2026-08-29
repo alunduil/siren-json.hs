@@ -75,28 +75,28 @@ library
 test-suite siren-json-tests
   import:           warnings, language, deps
   type:             exitcode-stdio-1.0
-  main-is:          Spec.hs
+  main-is:          Main.hs
 
   hs-source-dirs:   test
 
   other-modules:
       Data.SirenJSON.Arbitrary
     , Data.SirenJSON.Norm
-    , Data.SirenJSONSpec
-    , External.Network.HTTP.Media.MediaType.JSONSpec
-    , External.Network.HTTP.Types.Method.JSONSpec
-
-  build-tool-depends:
-      hspec-discover:hspec-discover >= 2.11 && < 2.12
+    , Data.SirenJSONTest
+    , External.Network.HTTP.Media.MediaType.JSONTest
+    , External.Network.HTTP.Types.Method.JSONTest
 
   build-depends:
-      hspec                >= 2.11 && < 2.12
-    , network-arbitrary    >= 1.0  && < 1.1
+      network-arbitrary    >= 1.0  && < 1.1
     , QuickCheck           >= 2.14 && < 2.19
     , quickcheck-instances >= 0.3  && < 0.5
     , siren-json
+    , tasty                >= 1.5  && < 1.6
+    , tasty-hunit          >= 0.10 && < 0.11
+    , tasty-quickcheck     >= 0.10 && < 0.12
     , test-invariant       >= 0.4  && < 0.5
 
   other-extensions:
       OverloadedStrings
     , RecordWildCards
+    , ScopedTypeVariables

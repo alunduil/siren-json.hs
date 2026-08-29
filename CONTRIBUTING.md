@@ -18,7 +18,8 @@ support falls short today.
 ## Getting started
 
 The library lives in `src/Data/SirenJSON.hs`; orphan-instance shims for upstream
-types are under `src/External/`. Tests use `hspec` with `hspec-discover` in `test/`.
+types are under `src/External/`. Tests use tasty in `test/`, aggregated by
+`test/Main.hs`.
 
 ```sh
 cabal build
