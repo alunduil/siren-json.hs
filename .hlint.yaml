@@ -16,5 +16,5 @@
 - ignore:
     name: Avoid partial function
     within:
-      - Data.SirenJSONSpec
+      - Data.SirenJSONTest
       - Data.SirenJSON.Arbitrary

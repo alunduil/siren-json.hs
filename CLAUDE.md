@@ -9,8 +9,9 @@ Haskell library: types, classes, and functions for the
 
 Reach for these before `curl`, manual API calls, or first-principles scripts.
 
-- Build / test: `cabal build`, `cabal test` (hspec + hspec-discover;
-  suite `siren-json-tests` in `test/`).
+- Build / test: `cabal build`, `cabal test` (tasty + tasty-hunit +
+  tasty-quickcheck; suite `siren-json-tests` in `test/`, entrypoint
+  `test/Main.hs`).
 - Publish: manual, by a maintainer — `cabal sdist` then `cabal upload
   --publish`. Steps in `CONTRIBUTING.md`.
 - Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`, next milestone

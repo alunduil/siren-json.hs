@@ -17,7 +17,7 @@ and this project adheres to the
 ### Changed
 
 - Support GHC 9.6 through 9.14. GHC 9.4 and earlier no longer resolve.
-- Update dependencies: base, aeson, http-media, network-arbitrary, hspec, and
+- Update dependencies: base, aeson, http-media, network-arbitrary, and
   QuickCheck.
 - Require aeson >= 2.2 for its `Network.URI.URI` JSON instances.
 - Decode `href` as an absolute URI, matching the Siren specification. Payloads
