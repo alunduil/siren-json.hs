@@ -28,17 +28,10 @@ cabal test
 
 Run both before opening a pull request.
 
-[pre-commit](https://pre-commit.com) runs these hooks:
-
-- [`fourmolu`](https://github.com/fourmolu/fourmolu) formats the Haskell
-  sources; [`hlint`](https://github.com/ndmitchell/hlint) lints them.
-- [`markdownlint`](https://github.com/DavidAnson/markdownlint-cli2) checks
-  Markdown structure; [Vale](https://vale.sh) checks its prose.
-- `renovate-config-validator` checks `renovate.json` against Renovate's schema.
-
-The `CI` workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs
-the same hooks, so a local install turns a review-time failure into a
-commit-time one.
+[pre-commit](https://pre-commit.com) formats and lints the Haskell sources, the
+Markdown and its links, and `renovate.json`. The `CI` workflow
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same hooks, so
+a local install turns a review-time failure into a commit-time one.
 
 ```sh
 pre-commit install            # install the git hook (one-off)
@@ -46,20 +39,12 @@ pre-commit run --all-files    # run all hooks against the repo
 pre-commit autoupdate         # bump third-party hook revs
 ```
 
-Install `fourmolu` and `hlint` yourself. Both hooks run whatever is on your
+Install [`fourmolu`](https://github.com/fourmolu/fourmolu),
+[`hlint`](https://github.com/ndmitchell/hlint), and
+[lychee](https://lychee.cli.rs) yourself. Those hooks run whatever is on your
 PATH. Match the versions CI pins in the `pre-commit` job's `env:`. `fourmolu`
 formats differently between releases, so a mismatch leaves the hook rewriting
 files that CI then rejects.
-
-Refresh Vale's style packages with `vale sync` after changing `Packages` in
-`.vale.ini`. They're checked in under `.vale/styles`, so the hook itself needs
-no network access.
-
-Install [lychee](https://lychee.cli.rs) too. Its hook runs `--offline`, which
-checks the links pointing at files in this repository and skips the rest, so a
-rename that strands a link fails the commit and no third party's outage can. A
-weekly job checks the external URLs and opens an issue for a dead one. Run
-`lychee "./**/*.md"` yourself to check a link sooner than that.
 
 ## Pull requests
 

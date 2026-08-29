@@ -20,7 +20,8 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 - Lint / format: `pre-commit run --all-files` — `fourmolu` and `hlint` over the
   Haskell sources (`fourmolu.yaml`, `.hlint.yaml`), `markdownlint`
   (`.markdownlint.jsonc`) and Vale (`.vale.ini`, styles checked in under
-  `.vale/styles`) over the Markdown, `lychee --offline` (`lychee.toml`) over its
+  `.vale/styles` — refresh with `vale sync` after changing `Packages`) over the
+  Markdown, `lychee --offline` (`lychee.toml`) over its
   links, `renovate-config-validator` (`--strict --no-global`), and the
   whitespace/YAML hygiene set. `fourmolu`, `hlint`, and `lychee` run from PATH;
   CI's pre-commit job installs the versions it pins. Vale gates on
