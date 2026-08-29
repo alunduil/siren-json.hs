@@ -27,11 +27,7 @@ import Data.SirenJSON
 import Data.SirenJSON.Arbitrary ()
 import Data.SirenJSON.Norm (Norm (normalize))
 
-{- | A test name, a value carrying no optional key, and the JSON it encodes to.
-
-  Decoding and encoding read the same row in opposite directions, so the two
-  stay in step only by travelling together.
--}
+-- | A test name, a value with no optional key set, and the JSON it encodes to.
 data Minimal a = Minimal TestName a BL.ByteString
 
 exampleURI :: URI
@@ -65,7 +61,6 @@ minimalEntity =
     (Entity [] Map.empty [] [] [] Nothing)
     "{}"
 
--- | An embedded link is a 'Link', down to the JSON it encodes to.
 minimalEmbeddedLink :: Minimal SubEntity
 minimalEmbeddedLink = Minimal "SubEntity_EmbeddedLink" (EmbeddedLink link) json
  where
@@ -86,14 +81,11 @@ decodeSucceeds name = testCase name . assertBool "decode returned Nothing" . isJ
 decodeFails :: TestName -> Maybe a -> TestTree
 decodeFails name = testCase name . assertBool "decode returned a value" . isNothing
 
--- | Decode reaches the value itself, not merely something.
 decodesTo :: (Eq a, FromJSON a, Show a) => Minimal a -> TestTree
 decodesTo (Minimal name value json) = testCase name $ decode json @?= Just value
 
-{- | The decode and encode case for one row.
-
-  A single 'Minimal' cannot serve both groups from one list — they need
-  separate 'testGroup's — so each row yields the pair its two groups draw from.
+{- | Rows differ in type, so no list can hold them for a second pass. Each row
+  yields both of its cases at once, for 'unzip' to sort into their groups.
 -}
 minimalCases :: forall a. (FromJSON a, ToJSON a) => Minimal a -> (TestTree, TestTree)
 minimalCases (Minimal name value json) =
