@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 {- |
 Module      : Data.SirenJSONTest
@@ -11,7 +12,7 @@ Tests for "Data.SirenJSON".
 module Data.SirenJSONTest (tests) where
 
 import Data.Aeson (FromJSON, ToJSON, decode, encode)
-import Data.Maybe (fromJust, isJust)
+import Data.Maybe (fromJust, isJust, isNothing)
 import Network.URI (URI, parseURI)
 import Test.Invariant ((<=>))
 import Test.QuickCheck.Instances ()
@@ -26,29 +27,82 @@ import Data.SirenJSON
 import Data.SirenJSON.Arbitrary ()
 import Data.SirenJSON.Norm (Norm (normalize))
 
+{- | A test name, a value carrying no optional key, and the JSON it encodes to.
+
+  Decoding and encoding read the same row in opposite directions, so the two
+  stay in step only by travelling together.
+-}
+data Minimal a = Minimal TestName a BL.ByteString
+
+exampleURI :: URI
+exampleURI = fromJust $ parseURI "http://example.com"
+
+minimalField :: Minimal Field
+minimalField =
+  Minimal
+    "Field"
+    (Field "name" [] Nothing Nothing Nothing)
+    "{\"name\":\"name\"}"
+
+minimalAction :: Minimal Action
+minimalAction =
+  Minimal
+    "Action"
+    (Action "name" [] Nothing exampleURI Nothing Nothing [])
+    "{\"href\":\"http://example.com\",\"name\":\"name\"}"
+
+minimalLink :: Minimal Link
+minimalLink =
+  Minimal
+    "Link"
+    (Link [] [] exampleURI Nothing Nothing)
+    "{\"href\":\"http://example.com\",\"rel\":[]}"
+
+minimalEntity :: Minimal Entity
+minimalEntity =
+  Minimal
+    "Entity"
+    (Entity [] Map.empty [] [] [] Nothing)
+    "{}"
+
+-- | An embedded link is a 'Link', down to the JSON it encodes to.
+minimalEmbeddedLink :: Minimal SubEntity
+minimalEmbeddedLink = Minimal "SubEntity_EmbeddedLink" (EmbeddedLink link) json
+ where
+  Minimal _ link json = minimalLink
+
+minimalEmbeddedRepresentation :: Minimal SubEntity
+minimalEmbeddedRepresentation =
+  Minimal
+    "SubEntity_EmbeddedRepresentation"
+    (EmbeddedRepresentation entity [])
+    "{\"rel\":[]}"
+ where
+  Minimal _ entity _ = minimalEntity
+
 decodeSucceeds :: TestName -> Maybe a -> TestTree
 decodeSucceeds name = testCase name . assertBool "decode returned Nothing" . isJust
 
-eURI :: URI
-eURI = fromJust $ parseURI "http://example.com"
+decodeFails :: TestName -> Maybe a -> TestTree
+decodeFails name = testCase name . assertBool "decode returned a value" . isNothing
 
-mEntity :: BL.ByteString
-mEntity = "{}"
+-- | Decode reaches the value itself, not merely something.
+decodesTo :: (Eq a, FromJSON a, Show a) => Minimal a -> TestTree
+decodesTo (Minimal name value json) = testCase name $ decode json @?= Just value
 
-mEmbeddedRepresentation :: BL.ByteString
-mEmbeddedRepresentation = "{\"rel\":[]}"
+{- | The decode and encode case for one row.
 
-mEmbeddedLink :: BL.ByteString
-mEmbeddedLink = "{\"href\":\"http://example.com\",\"rel\":[]}"
+  A single 'Minimal' cannot serve both groups from one list — they need
+  separate 'testGroup's — so each row yields the pair its two groups draw from.
+-}
+minimalCases :: forall a. (FromJSON a, ToJSON a) => Minimal a -> (TestTree, TestTree)
+minimalCases (Minimal name value json) =
+  ( decodeSucceeds name (decode json :: Maybe a)
+  , testCase name $ encode value @?= json
+  )
 
-mLink :: BL.ByteString
-mLink = "{\"href\":\"http://example.com\",\"rel\":[]}"
-
-mAction :: BL.ByteString
-mAction = "{\"href\":\"http://example.com\",\"name\":\"name\"}"
-
-mField :: BL.ByteString
-mField = "{\"name\":\"name\"}"
+roundtrips :: (Eq a, FromJSON a, Norm a, ToJSON a) => a -> Bool
+roundtrips = fromJust . decode . encode <=> normalize
 
 tests :: TestTree
 tests =
@@ -64,70 +118,47 @@ tests =
 propertiesTests :: TestTree
 propertiesTests =
   testGroup
-    "properties"
-    [ testGroup
-        "fromJust . decode . encode == normalize"
-        [ testProperty "Field" (roundtrips :: Field -> Bool)
-        , testProperty "Action" (roundtrips :: Action -> Bool)
-        , testProperty "Link" (roundtrips :: Link -> Bool)
-        , testProperty "SubEntity" (roundtrips :: SubEntity -> Bool)
-        , testProperty "Entity" (roundtrips :: Entity -> Bool)
-        ]
+    "fromJust . decode . encode == normalize"
+    [ testProperty "Field" (roundtrips :: Field -> Bool)
+    , testProperty "Action" (roundtrips :: Action -> Bool)
+    , testProperty "Link" (roundtrips :: Link -> Bool)
+    , testProperty "SubEntity" (roundtrips :: SubEntity -> Bool)
+    , testProperty "Entity" (roundtrips :: Entity -> Bool)
     ]
-
-roundtrips :: (Eq a, FromJSON a, Norm a, ToJSON a) => a -> Bool
-roundtrips = fromJust . decode . encode <=> normalize
 
 subEntityTests :: TestTree
 subEntityTests =
   testGroup
     "differentiate SubEntity values"
-    [ testCase "SubEntity_EmbeddedRepresentation" $
-        (decode mEmbeddedRepresentation :: Maybe SubEntity) @?= Just (EmbeddedRepresentation (Entity [] Map.empty [] [] [] Nothing) [])
-    , testCase "SubEntity_EmbeddedLink" $
-        (decode mEmbeddedLink :: Maybe SubEntity) @?= Just (EmbeddedLink (Link [] [] eURI Nothing Nothing))
+    [ decodesTo minimalEmbeddedRepresentation
+    , decodesTo minimalEmbeddedLink
     ]
 
 hrefTests :: TestTree
 hrefTests =
   testGroup
-    "href"
-    [ testGroup
-        "decode absolute URIs only"
-        [ testCase "Link" $ (decode mLink_RelativeHref :: Maybe Link) @?= Nothing
-        , testCase "Action" $ (decode mAction_RelativeHref :: Maybe Action) @?= Nothing
-        ]
+    "href decodes absolute URIs only"
+    [ decodeFails "Link" (decode relativeLink :: Maybe Link)
+    , decodeFails "Action" (decode relativeAction :: Maybe Action)
     ]
  where
-  mLink_RelativeHref = "{\"href\":\"/orders/42\",\"rel\":[]}" :: BL.ByteString
-  mAction_RelativeHref = "{\"href\":\"/orders/42\",\"name\":\"name\"}" :: BL.ByteString
+  relativeLink = "{\"href\":\"/orders/42\",\"rel\":[]}" :: BL.ByteString
+  relativeAction = "{\"href\":\"/orders/42\",\"name\":\"name\"}" :: BL.ByteString
 
 missingKeysTests :: TestTree
 missingKeysTests =
   testGroup
     "JSON Missing Keys"
-    [ testGroup
-        "decode minimal JSON strings"
-        [ decodeSucceeds "Field" (decode mField :: Maybe Field)
-        , decodeSucceeds "Action" (decode mAction :: Maybe Action)
-        , decodeSucceeds "Link" (decode mLink :: Maybe Link)
-        , decodeSucceeds "SubEntity_EmbeddedRepresentation" (decode mEmbeddedRepresentation :: Maybe SubEntity)
-        , decodeSucceeds "SubEntity_EmbeddedLink" (decode mEmbeddedLink :: Maybe SubEntity)
-        , decodeSucceeds "Entity" (decode mEntity :: Maybe Entity)
-        ]
-    , testGroup
-        "encode minimal data to JSON"
-        [ testCase "Field" $
-            encode (Field "name" [] Nothing Nothing Nothing) @?= mField
-        , testCase "Action" $
-            encode (Action "name" [] Nothing eURI Nothing Nothing []) @?= mAction
-        , testCase "Link" $
-            encode (Link [] [] eURI Nothing Nothing) @?= mLink
-        , testCase "SubEntity_EmbeddedRepresentation" $
-            encode (EmbeddedRepresentation (Entity [] Map.empty [] [] [] Nothing) []) @?= mEmbeddedRepresentation
-        , testCase "SubEntity_EmbeddedLink" $
-            encode (EmbeddedLink (Link [] [] eURI Nothing Nothing)) @?= mEmbeddedLink
-        , testCase "Entity" $
-            encode (Entity [] Map.empty [] [] [] Nothing) @?= mEntity
-        ]
+    [ testGroup "decode minimal JSON strings" decodeTests
+    , testGroup "encode minimal data to JSON" encodeTests
     ]
+ where
+  (decodeTests, encodeTests) =
+    unzip
+      [ minimalCases minimalField
+      , minimalCases minimalAction
+      , minimalCases minimalLink
+      , minimalCases minimalEmbeddedRepresentation
+      , minimalCases minimalEmbeddedLink
+      , minimalCases minimalEntity
+      ]

@@ -22,8 +22,5 @@ tests :: TestTree
 tests =
   testGroup
     "External.Network.HTTP.Media.MediaType.JSON"
-    [ testGroup
-        "properties"
-        [ testProperty "fromJust . decode . encode == id" (fromJust . decode . encode <=> id :: MediaType -> Bool)
-        ]
+    [ testProperty "fromJust . decode . encode == id" (fromJust . decode . encode <=> id :: MediaType -> Bool)
     ]

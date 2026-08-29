@@ -22,8 +22,5 @@ tests :: TestTree
 tests =
   testGroup
     "External.Network.HTTP.Types.Method.JSON"
-    [ testGroup
-        "properties"
-        [ testProperty "fromJust . decode . encode == id" (fromJust . decode . encode <=> id :: StdMethod -> Bool)
-        ]
+    [ testProperty "fromJust . decode . encode == id" (fromJust . decode . encode <=> id :: StdMethod -> Bool)
     ]
