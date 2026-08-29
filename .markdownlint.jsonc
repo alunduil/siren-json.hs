@@ -1,13 +1,10 @@
 {
-  // markdownlint ruleset. Read by markdownlint-cli2 (the pre-commit hook)
-  // and by editor integrations. Default ruleset with two deviations.
   "default": true,
 
-  // Prose isn't hard-wrapped to a fixed column here, and the vendored
-  // Contributor Covenant ships one paragraph per line.
+  // Prose here isn't hard-wrapped, and the Contributor Covenant ships one
+  // paragraph per line.
   "MD013": false,
 
-  // Keep a Changelog repeats Added/Changed/Fixed headings under every
-  // release; siblings_only flags duplicates only within the same parent.
+  // Keep a Changelog repeats Added/Changed/Fixed under every release.
   "MD024": { "siblings_only": true }
 }

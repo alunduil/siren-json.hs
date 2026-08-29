@@ -50,13 +50,13 @@ PATH. Match the versions CI pins in the `pre-commit` job's `env:`. `fourmolu`
 formats differently between releases, so a mismatch leaves the hook rewriting
 files that CI then rejects.
 
-Vale's style packages are checked in under `.vale/styles`, so the hook needs no
-network access. Refresh them with `vale sync` after changing `Packages` in
-`.vale.ini`.
+Refresh Vale's style packages with `vale sync` after changing `Packages` in
+`.vale.ini`. They're checked in under `.vale/styles`, so the hook itself needs
+no network access.
 
-CI checks the Markdown's links with [lychee](https://lychee.cli.rs). It needs
-the network, so pre-commit doesn't run it. Check a link you added with
-`lychee "./**/*.md"` before pushing.
+Check the Markdown's links with [lychee](https://lychee.cli.rs) before pushing:
+`lychee "./**/*.md"`. CI runs the same check. It needs the network, so
+pre-commit doesn't run it.
 
 ## Pull requests
 

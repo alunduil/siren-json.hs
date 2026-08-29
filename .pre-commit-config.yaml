@@ -1,5 +1,4 @@
-# .vale/styles/ is vendored by `vale sync`; only config/ (our vocabulary)
-# is ours. Keep the vendored packages out of every hook.
+# `vale sync` writes .vale/styles/; only config/ under it is ours.
 exclude: ^\.vale/styles/(?!config/)
 
 repos:
@@ -20,9 +19,8 @@ repos:
     hooks:
       - id: markdownlint-cli2
 
-  # Vale prose linting over Markdown, gating on errors only. Styles are
-  # vendored under .vale/styles (see the top-level exclude), so the hook
-  # needs no `vale sync` step.
+  # Vale's documented setup pairs this with a `vale sync` hook. The styles
+  # are vendored, so there is nothing to fetch.
   - repo: https://github.com/errata-ai/vale
     rev: v3.19.0
     hooks:

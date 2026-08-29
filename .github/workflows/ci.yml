@@ -75,8 +75,6 @@ jobs:
           key: lychee-${{ github.sha }}
           restore-keys: lychee-
 
-      # The weekly run re-checks the same links against link rot; this one
-      # blocks a merge that introduces a dead link.
       - name: Check links
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:

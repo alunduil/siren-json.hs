@@ -1,20 +1,15 @@
-# Configuration for the lychee link checker, run in CI by the `links` jobs
-# in .github/workflows/ci.yml and weekly.yml. See https://lychee.cli.rs.
-
-# Both jobs run non-interactively, where the progress bar is noise.
 no_progress = true
 
-# Cache results between runs so unchanged links aren't re-fetched; the
-# workflows persist .lycheecache across runs.
+# Persisting .lycheecache between runs is the workflows' job; without that
+# these two do nothing.
 cache = true
 max_cache_age = "1w"
 
-# Give slow hosts (Hackage, the amundsen.com media-type page) room to
-# answer before a link is declared dead.
+# A slow host isn't a dead link. Give it room to answer before the run
+# reports one.
 timeout = 20
 max_retries = 3
 retry_wait_time = 2
 
-# GitHub and shields.io throttle anonymous bursts with 429 — that's rate
-# limiting, not a dead link.
+# A 429 is rate limiting, not a dead link.
 accept = ["200..=299", "429"]

@@ -1,16 +1,13 @@
 name: Weekly
 
-# Sensors that run on a cadence rather than on an integration event: they
-# watch state that changes without a commit. Each files a tracking issue
-# instead of failing, since nobody is waiting on the run, and each passes
-# update_existing so a standing issue is refreshed in place rather than
-# duplicated every Friday.
+# These sensors watch state that changes without a commit. Nobody is waiting
+# on a scheduled run, so each reports through a tracking issue instead of
+# failing, refreshing the standing one rather than filing a new one weekly.
 
 on:
   workflow_dispatch:
   schedule:
-    # Fridays 18:00 Europe/London. GitHub applies the timezone (and DST), so
-    # the report is waiting at 18:00 local year-round.
+    # GitHub applies `timezone`, DST included, so this stays 18:00 local.
     - cron: "0 18 * * 5"
       timezone: "Europe/London"
 
@@ -132,9 +129,6 @@ jobs:
           key: lychee-${{ github.sha }}
           restore-keys: lychee-
 
-      # Link rot happens without a commit, so this sweep re-checks links the
-      # ci.yml job last saw when they still resolved. fail: false keeps the
-      # run green so the next step reports through an issue instead.
       - name: Check links
         id: lychee
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
@@ -142,8 +136,8 @@ jobs:
           args: --config lychee.toml "./**/*.md"
           fail: false
 
-      # create-an-issue takes the title and labels from front matter, which
-      # lychee's report (lychee/out.md) has no way to carry.
+      # create-an-issue reads the title and labels from front matter, which
+      # lychee's report has no way to carry.
       - name: Compose broken-links issue
         if: steps.lychee.outputs.exit_code != 0
         run: |
