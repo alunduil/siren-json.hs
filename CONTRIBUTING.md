@@ -27,14 +27,17 @@ cabal test
 
 Run both before opening a pull request.
 
-[pre-commit](https://pre-commit.com) formats the Haskell sources with
-[`fourmolu`](https://github.com/fourmolu/fourmolu), lints them with
-[`hlint`](https://github.com/ndmitchell/hlint), lints the Markdown with
-[`markdownlint`](https://github.com/DavidAnson/markdownlint-cli2) and its prose
-with [Vale](https://vale.sh), and validates `renovate.json` against Renovate's
-schema. The `CI` workflow
-([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same hooks,
-so a local install turns a review-time failure into a commit-time one.
+[pre-commit](https://pre-commit.com) runs these hooks:
+
+- [`fourmolu`](https://github.com/fourmolu/fourmolu) formats the Haskell
+  sources; [`hlint`](https://github.com/ndmitchell/hlint) lints them.
+- [`markdownlint`](https://github.com/DavidAnson/markdownlint-cli2) checks
+  Markdown structure; [Vale](https://vale.sh) checks its prose.
+- `renovate-config-validator` checks `renovate.json` against Renovate's schema.
+
+The `CI` workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs
+the same hooks, so a local install turns a review-time failure into a
+commit-time one.
 
 ```sh
 pre-commit install            # install the git hook (one-off)
@@ -50,6 +53,10 @@ files that CI then rejects.
 Vale's style packages are checked in under `.vale/styles`, so the hook needs no
 network access. Refresh them with `vale sync` after changing `Packages` in
 `.vale.ini`.
+
+CI checks the Markdown's links with [lychee](https://lychee.cli.rs). It needs
+the network, so pre-commit doesn't run it. Check a link you added with
+`lychee "./**/*.md"` before pushing.
 
 ## Pull requests
 

@@ -2,7 +2,9 @@ name: Weekly
 
 # Sensors that run on a cadence rather than on an integration event: they
 # watch state that changes without a commit. Each files a tracking issue
-# instead of failing, since nobody is waiting on the run.
+# instead of failing, since nobody is waiting on the run, and each passes
+# update_existing so a standing issue is refreshed in place rather than
+# duplicated every Friday.
 
 on:
   workflow_dispatch:
@@ -105,8 +107,6 @@ jobs:
           (CI/packaging-only is a patch).
           EOF
 
-      # update_existing overwrites the open issue with the same title, so a
-      # standing drift issue is refreshed instead of duplicated every week.
       - name: File or refresh drift issue
         if: steps.check.outputs.drift == 'true'
         uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
@@ -139,25 +139,30 @@ jobs:
         id: lychee
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
-          args: --config lychee.toml --no-progress "./**/*.md"
+          args: --config lychee.toml "./**/*.md"
           fail: false
 
-      # lychee writes its Markdown report to lychee/out.md. Refresh the open
-      # tracking issue if one exists rather than filing a fresh duplicate every
-      # Friday; create-issue-from-file can't update, so drive gh directly.
+      # create-an-issue takes the title and labels from front matter, which
+      # lychee's report (lychee/out.md) has no way to carry.
+      - name: Compose broken-links issue
+        if: steps.lychee.outputs.exit_code != 0
+        run: |
+          set -euo pipefail
+
+          cat > broken-links-issue.md <<'EOF'
+          ---
+          title: Broken links detected
+          labels:
+            - documentation
+          ---
+          EOF
+          cat lychee/out.md >> broken-links-issue.md
+
       - name: File or refresh broken-links issue
         if: steps.lychee.outputs.exit_code != 0
+        uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
         env:
-          GH_TOKEN: ${{ github.token }}
-          TITLE: Broken links detected
-        run: |
-          number=$(gh api "repos/${{ github.repository }}/issues" \
-            --method GET -f state=open -f labels=documentation \
-            --jq "map(select(.title == \"$TITLE\")) | .[0].number // empty")
-          if [ -n "$number" ]; then
-            gh issue edit "$number" --body-file lychee/out.md
-            echo "Refreshed existing issue #$number"
-          else
-            gh issue create --title "$TITLE" --label documentation \
-              --body-file lychee/out.md
-          fi
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          filename: broken-links-issue.md
+          update_existing: true
