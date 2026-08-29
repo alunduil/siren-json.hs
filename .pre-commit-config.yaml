@@ -18,6 +18,9 @@ repos:
     rev: v0.23.2
     hooks:
       - id: markdownlint-cli2
+        # The Contributor Covenant is boilerplate; restyling it to our rules
+        # forks it. .vale.ini exempts it for the same reason.
+        exclude: ^CODE_OF_CONDUCT\.md$
 
   # Vale's documented setup pairs this with a `vale sync` hook. The styles
   # are vendored, so there is nothing to fetch.

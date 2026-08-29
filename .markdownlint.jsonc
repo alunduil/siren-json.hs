@@ -1,10 +1,6 @@
 {
   "default": true,
 
-  // Prose here isn't hard-wrapped, and the Contributor Covenant ships one
-  // paragraph per line.
-  "MD013": false,
-
   // Keep a Changelog repeats Added/Changed/Fixed under every release.
   "MD024": { "siblings_only": true }
 }
