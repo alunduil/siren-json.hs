@@ -25,6 +25,9 @@ repos:
     rev: v3.19.0
     hooks:
       - id: vale
+        # Vale exits nonzero on an error-severity finding whatever this level
+        # is, so it only keeps the standing warnings and suggestions out of
+        # the failure output.
         args: [--output=line, --minAlertLevel=error]
         types: [markdown]
 
