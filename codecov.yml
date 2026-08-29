@@ -1,6 +1,6 @@
 # hpc-codecov reports every module in the .tix, the test suite included.
 # "test/**/*" would compile to a regex requiring a further slash, missing
-# test/Spec.hs.
+# test/Main.hs.
 ignore:
   - "test/**"
 
