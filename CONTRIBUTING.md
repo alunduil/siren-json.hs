@@ -62,16 +62,23 @@ like attribution, add yourself there.
 
 ## Releasing (maintainers)
 
-Releases go to [Hackage](https://hackage.haskell.org/package/siren-json) by
-hand.
+A [Hackage](https://hackage.haskell.org/package/siren-json) release happens in
+two stages, because a published version cannot be undone or replaced, only
+deprecated. The `Release` workflow
+([`.github/workflows/release.yml`](.github/workflows/release.yml)) uploads a
+candidate for you; publishing it is manual.
 
-1. Bump `version` in `siren-json.cabal`.
-2. In `CHANGELOG.md`, move the `Unreleased` entries under the new version and
-   add its compare link.
-3. Tag and publish:
+1. Open a pull request bumping `version` in `siren-json.cabal` and moving the
+   `CHANGELOG.md` `Unreleased` entries under the new version, with its compare
+   link. Review it carefully — it is the last gate before the candidate goes up.
+2. Merge it to `main`. A merge that leaves `version` untouched uploads nothing.
+3. Review the candidate at
+   `https://hackage.haskell.org/package/siren-json-<version>/candidate`. The
+   metadata, module list, and rendered Haddock there come from the uploaded
+   tarball, so this is the last chance to catch a packaging mistake.
+4. Run the `Release` workflow manually from the merge commit, passing that
+   version as the `version` input. It refuses to run against a ref declaring a
+   different version, and tags the commit once Hackage accepts the upload.
 
-   ```sh
-   git tag <version> && git push origin <version>
-   cabal sdist
-   cabal upload --publish dist-newstyle/sdist/siren-json-<version>.tar.gz
-   ```
+Both jobs read `HACKAGE_TOKEN` from the `hackage` environment. Generate the
+token under "Edit auth tokens" on the Hackage account management page.

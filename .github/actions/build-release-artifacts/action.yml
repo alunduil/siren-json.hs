@@ -1,0 +1,29 @@
+name: Build release artifacts
+description: >-
+  Build the sdist and Haddock tarballs under dist-newstyle for a caller to
+  upload to Hackage.
+
+# The candidate and publish jobs have to build identically. A publish is
+# immutable, so if they diverge the bytes that ship are not the ones reviewed.
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up GHC
+      uses: haskell-actions/setup@6037f33647c3f17758a2356c80fc4a53d7e0685d # v2.12.0
+      with:
+        ghc-version: latest
+        cabal-version: latest
+
+    - name: Update Hackage index
+      shell: bash
+      run: cabal update
+
+    - name: Build sdist
+      shell: bash
+      run: cabal sdist
+
+    - name: Build documentation
+      shell: bash
+      run: cabal haddock --haddock-for-hackage
