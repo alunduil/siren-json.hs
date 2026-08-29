@@ -18,12 +18,19 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   `1.0.0.0`.
 - Dependency updates: Renovate (`renovate.json`).
 - Lint / format: `pre-commit run --all-files` — `fourmolu` and `hlint` over the
-  Haskell sources (`fourmolu.yaml`, `.hlint.yaml`), `renovate-config-validator`
-  (`--strict --no-global`), and the whitespace/YAML hygiene set. Both Haskell
-  hooks run from PATH; CI's pre-commit job installs the versions it pins.
+  Haskell sources (`fourmolu.yaml`, `.hlint.yaml`), `markdownlint`
+  (`.markdownlint.jsonc`) and Vale (`.vale.ini`, styles checked in under
+  `.vale/styles`) over the Markdown, `lychee --offline` (`lychee.toml`) over its
+  links, `renovate-config-validator` (`--strict --no-global`), and the
+  whitespace/YAML hygiene set. `fourmolu`, `hlint`, and `lychee` run from PATH;
+  CI's pre-commit job installs the versions it pins. Vale gates on
+  error-severity findings; its alert level only sets what prints.
+  `CODE_OF_CONDUCT.md` is boilerplate and exempt from both Markdown linters.
 - CI: `.github/workflows/ci.yml` runs pre-commit, the GHC matrix on Linux and
   macOS building from the sdist tarball, and a coverage job that uploads to
-  Codecov (`codecov.yml`). Workflow files are named for
+  Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC
+  matrix drift and the external link sweep, each filing a tracking issue rather
+  than failing. Workflow files are named for
   *when* they run, not the tool (alunduil-chezmoi ADR 0004), so always-on
   sensors become jobs in `ci.yml` rather than new files. Sibling Haskell repos
   still use the older per-tool `pre-commit.yml` layout.
