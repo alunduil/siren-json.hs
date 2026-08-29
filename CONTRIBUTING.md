@@ -12,13 +12,13 @@ participating you are expected to uphold it.
 
 Open an issue on the [issue tracker](https://github.com/alunduil/siren-json.hs/issues).
 For bugs, include the version, a minimal example, and what you expected versus
-what happened. For features, describe the use case — how `application/vnd.siren+json`
+what happened. For features, describe the use case: how `application/vnd.siren+json`
 support falls short today.
 
 ## Getting started
 
 The library lives in `src/Data/SirenJSON.hs`; orphan-instance shims for upstream
-types are under `src/External/`. Tests use hspec with `hspec-discover` in `test/`.
+types are under `src/External/`. Tests use `hspec` with `hspec-discover` in `test/`.
 
 ```sh
 cabal build
@@ -28,9 +28,11 @@ cabal test
 Run both before opening a pull request.
 
 [pre-commit](https://pre-commit.com) formats the Haskell sources with
-[fourmolu](https://github.com/fourmolu/fourmolu), lints them with
-[hlint](https://github.com/ndmitchell/hlint), and validates `renovate.json`
-against Renovate's schema. The `CI` workflow
+[`fourmolu`](https://github.com/fourmolu/fourmolu), lints them with
+[`hlint`](https://github.com/ndmitchell/hlint), lints the Markdown with
+[`markdownlint`](https://github.com/DavidAnson/markdownlint-cli2) and its prose
+with [Vale](https://vale.sh), and validates `renovate.json` against Renovate's
+schema. The `CI` workflow
 ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same hooks,
 so a local install turns a review-time failure into a commit-time one.
 
@@ -40,16 +42,20 @@ pre-commit run --all-files    # run all hooks against the repo
 pre-commit autoupdate         # bump third-party hook revs
 ```
 
-Install `fourmolu` and `hlint` yourself — both hooks run whatever is on your
-PATH. Match the versions CI pins in the `pre-commit` job's `env:`. fourmolu
+Install `fourmolu` and `hlint` yourself. Both hooks run whatever is on your
+PATH. Match the versions CI pins in the `pre-commit` job's `env:`. `fourmolu`
 formats differently between releases, so a mismatch leaves the hook rewriting
 files that CI then rejects.
+
+Vale's style packages are checked in under `.vale/styles`, so the hook needs no
+network access. Refresh them with `vale sync` after changing `Packages` in
+`.vale.ini`.
 
 ## Pull requests
 
 - Work on a feature branch and open a pull request against `main`. Pull requests
   are squash-merged, so keep the branch focused on one change.
-- Open the pull request as a draft until it is ready for review.
+- Open the pull request as a draft until it's ready for review.
 - Follow the [seven rules of a great commit message](https://cbea.ms/git-commit/).
 - This library targets the `1.0.0.0` API-commitment milestone. Changes to the
   module export list force a major [PVP](https://pvp.haskell.org/) version bump,
