@@ -1,0 +1,77 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt <alunduil@alunduil.com>
+# SPDX-License-Identifier: MIT
+
+# Copyright and licensing for files that don't carry an inline SPDX header.
+
+version = 1
+SPDX-PackageName = "siren-json"
+SPDX-PackageSupplier = "Alex Brandt <alunduil@alunduil.com>"
+SPDX-PackageDownloadLocation = "https://github.com/alunduil/siren-json.hs"
+
+# JSON admits no comments. .markdownlint.jsonc does, but markdownlint-cli2
+# reads it as JSON in some paths, so it's declared here rather than risking
+# a parse failure for a header.
+
+[[annotations]]
+path = ["**.json", ".markdownlint.jsonc"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Alex Brandt <alunduil@alunduil.com>"
+SPDX-License-Identifier = "MIT"
+
+# An HTML comment header renders visibly in some Markdown viewers and would
+# land in the Hackage-published README and CHANGELOG.
+
+[[annotations]]
+path = "**.md"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Alex Brandt <alunduil@alunduil.com>"
+SPDX-License-Identifier = "MIT"
+
+# One pattern per line; a header would read as a pattern comment.
+
+[[annotations]]
+path = ".gitignore"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Alex Brandt <alunduil@alunduil.com>"
+SPDX-License-Identifier = "MIT"
+
+# The license text itself. LICENSES/MIT.txt holds the SPDX-canonical copy
+# REUSE consults; this one stays at the root because GitHub's license
+# detector only matches root-level filenames.
+
+[[annotations]]
+path = "LICENSE"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Alex Brandt <alunduil@alunduil.com>"
+SPDX-License-Identifier = "MIT"
+
+# Vale style packs vendored by `vale sync`. Each pack carries its own
+# upstream author and license -- one stanza per pack, so adding or removing
+# a pack stays localised and a non-MIT pack surfaces in review instead of
+# disappearing under an aggregate.
+
+[[annotations]]
+path = ".vale/styles/Microsoft/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2018-2019 Joseph Kato"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ".vale/styles/proselint/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019 errata.ai"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = ".vale/styles/alex/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2020 errata.ai"
+SPDX-License-Identifier = "MIT"
+
+# Our own vocabulary, not vendored.
+
+[[annotations]]
+path = ".vale/styles/config/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Alex Brandt <alunduil@alunduil.com>"
+SPDX-License-Identifier = "MIT"

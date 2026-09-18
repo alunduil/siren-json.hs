@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2017 Alex Brandt <alunduil@alunduil.com>
+-- SPDX-License-Identifier: MIT
+
 {- |
 Module      : External.Network.HTTP.Media.MediaType.JSONTest
 Description : Tests for External.Network.HTTP.Media.MediaType.JSON

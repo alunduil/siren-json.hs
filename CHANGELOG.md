@@ -26,6 +26,9 @@ and this project adheres to the
 ### Removed
 
 - Remove the `network-uri-json` dependency.
+- Remove the `COPYRIGHT` file from the released package. Copyright and licensing
+  are now declared per file under the [REUSE](https://reuse.software)
+  specification.
 
 ## [0.3.1.1] - 2019-02-18
 

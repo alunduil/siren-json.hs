@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt <alunduil@alunduil.com>
+# SPDX-License-Identifier: MIT
+
 # hlint auto-discovers this dotted filename. A plain `hlint.yaml` is read only
 # when passed with `-h`, so renaming it leaves every setting below inert.
 

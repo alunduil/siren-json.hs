@@ -1,4 +1,10 @@
 cabal-version:       3.0
+
+-- cabal-version must be the first line of the file, so the SPDX header
+-- follows it rather than opening the file.
+-- SPDX-FileCopyrightText: 2017 Alex Brandt <alunduil@alunduil.com>
+-- SPDX-License-Identifier: MIT
+
 name:                siren-json
 version:             0.3.1.1
 synopsis:            Siren Tools for Haskell
@@ -23,7 +29,6 @@ tested-with:         GHC == 9.6.*
 
 extra-doc-files:
     CHANGELOG.md
-  , COPYRIGHT
   , README.md
 
 extra-source-files:
