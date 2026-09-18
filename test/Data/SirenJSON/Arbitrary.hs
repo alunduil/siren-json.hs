@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2017 Alex Brandt
+-- SPDX-License-Identifier: MIT
 {-# LANGUAGE RecordWildCards #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 

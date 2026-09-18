@@ -58,8 +58,23 @@ files that CI then rejects.
 
 ## Attribution
 
-The `COPYRIGHT` file lists contributors. If you submit a pull request and would
-like attribution, add yourself there.
+Claim copyright by adding yourself to the `SPDX-FileCopyrightText` line of each
+file you touch. A file carries one such line per contributor.
+
+<!-- REUSE-IgnoreStart -->
+
+```haskell
+-- SPDX-FileCopyrightText: 2017 Alex Brandt
+-- SPDX-FileCopyrightText: 2026 Your Name <you@example.com>
+-- SPDX-License-Identifier: MIT
+```
+
+<!-- REUSE-IgnoreEnd -->
+
+This follows the [REUSE](https://reuse.software) specification: every file
+declares its own copyright and license. A new file needs the header above. A
+format that rejects comments takes an annotation in [`REUSE.toml`](REUSE.toml)
+instead. The `reuse` pre-commit hook fails on a file carrying neither.
 
 ## Releasing (maintainers)
 

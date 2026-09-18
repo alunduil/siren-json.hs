@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2017 Alex Brandt
+-- SPDX-License-Identifier: MIT
+
 module Main (main) where
 
 import Test.Tasty (defaultMain, testGroup)

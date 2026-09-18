@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2017 Alex Brandt
+-- SPDX-License-Identifier: MIT
+
 {- |
 Module      : External.Network.HTTP.Types.Method.JSONTest
 Description : Tests for External.Network.HTTP.Types.Method.JSON

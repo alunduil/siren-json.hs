@@ -1,4 +1,9 @@
 cabal-version:       3.0
+
+-- cabal-version must be the first line of the file; nothing may precede it.
+-- SPDX-FileCopyrightText: 2017 Alex Brandt
+-- SPDX-License-Identifier: MIT
+
 name:                siren-json
 version:             0.3.1.1
 synopsis:            Siren Tools for Haskell
@@ -11,7 +16,7 @@ bug-reports:         https://github.com/alunduil/siren-json.hs/issues
 license:             MIT
 license-file:        LICENSE
 author:              Alex Brandt
-maintainer:          alunduil@alunduil.com
+maintainer:          alunduil@gmail.com
 copyright:           (c) 2017 Alex Brandt
 category:            Data
 build-type:          Simple
@@ -23,7 +28,6 @@ tested-with:         GHC == 9.6.*
 
 extra-doc-files:
     CHANGELOG.md
-  , COPYRIGHT
   , README.md
 
 extra-source-files:

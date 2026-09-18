@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt
+# SPDX-License-Identifier: MIT
+
 # `vale sync` writes .vale/styles/; only config/ under it is ours.
 exclude: ^\.vale/styles/(?!config/)
 
@@ -13,6 +16,14 @@ repos:
       - id: mixed-line-ending
         args: ["--fix=lf"]
       - id: check-yaml
+
+  # `reuse lint` reads the whole tree rather than a file list, so the
+  # top-level `exclude:` doesn't reach it; the vendored Vale styles are
+  # covered by their own REUSE.toml stanzas.
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: v6.2.0
+    hooks:
+      - id: reuse
 
   - repo: https://github.com/DavidAnson/markdownlint-cli2
     rev: v0.23.2

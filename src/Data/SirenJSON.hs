@@ -1,3 +1,5 @@
+-- SPDX-FileCopyrightText: 2017 Alex Brandt
+-- SPDX-License-Identifier: MIT
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}

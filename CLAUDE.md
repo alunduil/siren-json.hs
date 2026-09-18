@@ -22,11 +22,17 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   (`.markdownlint.jsonc`) and Vale (`.vale.ini`, styles checked in under
   `.vale/styles` — refresh with `vale sync` after changing `Packages`) over the
   Markdown, `lychee --offline` (`lychee.toml`) over its
-  links, `renovate-config-validator` (`--strict --no-global`), and the
+  links, `renovate-config-validator` (`--strict --no-global`), `reuse lint`
+  (`REUSE.toml`, `LICENSES/`), and the
   whitespace/YAML hygiene set. `fourmolu`, `hlint`, and `lychee` run from PATH;
   CI's pre-commit job installs the versions it pins. Vale gates on
   error-severity findings; its alert level only sets what prints.
   `CODE_OF_CONDUCT.md` is boilerplate and exempt from both Markdown linters.
+- Licensing: REUSE. A new file needs an SPDX header naming
+  `SPDX-FileCopyrightText` and `SPDX-License-Identifier` (MIT); Markdown, JSON,
+  and `.gitignore` take a `REUSE.toml` stanza instead. `reuse lint` reads file
+  contents, so prose quoting a tag with its value needs
+  `REUSE-IgnoreStart`/`REUSE-IgnoreEnd` around it — see `CONTRIBUTING.md`.
 - CI: `.github/workflows/ci.yml` runs pre-commit, the GHC matrix on Linux and
   macOS building from the sdist tarball, and a coverage job that uploads to
   Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC

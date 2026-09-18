@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt
+# SPDX-License-Identifier: MIT
+
+version = 1
+SPDX-PackageName = "siren-json"
+SPDX-PackageSupplier = "Alex Brandt"
+SPDX-PackageDownloadLocation = "https://github.com/alunduil/siren-json.hs"
+
+[[annotations]]
+path = [
+  "**.json",                # JSON admits no comments
+  "**.md",                  # README and CHANGELOG ship to Hackage verbatim
+  ".gitignore",
+  "LICENSE",                # duplicate of LICENSES/MIT.txt; GitHub's detector
+                            # only matches root-level filenames
+  ".vale/styles/config/**", # our vocabulary, not a vendored pack
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Alex Brandt"
+SPDX-License-Identifier = "MIT"
+
+# Vendored by `vale sync`, each under its own upstream copyright and license.
+# One stanza per pack, so a non-MIT pack surfaces in review rather than
+# disappearing under an aggregate.
+
+[[annotations]]
+path = ".vale/styles/Microsoft/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2018-2019 Joseph Kato"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+path = ".vale/styles/proselint/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019 errata.ai"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = ".vale/styles/alex/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2020 errata.ai"
+SPDX-License-Identifier = "MIT"

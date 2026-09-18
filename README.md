@@ -22,9 +22,10 @@ pull request conventions, and release process.
 
 ## Contributors
 
-The `COPYRIGHT` file contains a list of contributors with their respective
-copyrights and other information. If you submit a pull request and would like
-attribution; please, add yourself to the `COPYRIGHT` file.
+This project follows the [REUSE](https://reuse.software) specification. If you
+submit a pull request and would like attribution; please, add yourself to the
+`SPDX-FileCopyrightText` line of the files you touch. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md#attribution).
 
 [siren]: https://github.com/kevinswiber/siren
 [Hackage]: https://hackage.haskell.org/package/siren-json

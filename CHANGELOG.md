@@ -22,10 +22,15 @@ and this project adheres to the
 - Require aeson >= 2.2 for its `Network.URI.URI` JSON instances.
 - Decode `href` as an absolute URI, matching the Siren specification. Payloads
   with relative references no longer decode.
+- Point `maintainer` at a delivering address. The previous one was dead, so
+  Hackage showed a contact that discarded every message sent to it.
 
 ### Removed
 
 - Remove the `network-uri-json` dependency.
+- Remove the `COPYRIGHT` file from the released package. Copyright and licensing
+  are now declared per file under the [REUSE](https://reuse.software)
+  specification.
 
 ## [0.3.1.1] - 2019-02-18
 
