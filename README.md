@@ -22,11 +22,10 @@ pull request conventions, and release process.
 
 ## Contributors
 
-Every file declares its copyright and license as an SPDX header or a
-[`REUSE.toml`](REUSE.toml) annotation, following the
-[REUSE](https://reuse.software) specification. If you submit a pull request and
-would like attribution; please, add yourself to the `SPDX-FileCopyrightText`
-line of the files you touch. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+This project follows the [REUSE](https://reuse.software) specification. If you
+submit a pull request and would like attribution; please, add yourself to the
+`SPDX-FileCopyrightText` line of the files you touch. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md#attribution).
 
 [siren]: https://github.com/kevinswiber/siren
 [Hackage]: https://hackage.haskell.org/package/siren-json
