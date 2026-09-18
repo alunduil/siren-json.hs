@@ -28,14 +28,11 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   CI's pre-commit job installs the versions it pins. Vale gates on
   error-severity findings; its alert level only sets what prints.
   `CODE_OF_CONDUCT.md` is boilerplate and exempt from both Markdown linters.
-- Licensing: REUSE. A new file needs a two-line SPDX header naming
-  `SPDX-FileCopyrightText` and `SPDX-License-Identifier` (MIT); one whose format
-  rejects comments needs a `REUSE.toml` stanza instead. Markdown, JSON, and
-  `.gitignore` are annotated there by convention even though they accept
-  comments. `cabal-version` must open `siren-json.cabal`, so its header sits
-  below that line. `reuse lint` reads file contents, so prose quoting a tag with
-  its value needs `REUSE-IgnoreStart`/`REUSE-IgnoreEnd` around it — see the
-  example in `CONTRIBUTING.md`.
+- Licensing: REUSE. A new file needs an SPDX header naming
+  `SPDX-FileCopyrightText` and `SPDX-License-Identifier` (MIT); Markdown, JSON,
+  and `.gitignore` take a `REUSE.toml` stanza instead. `reuse lint` reads file
+  contents, so prose quoting a tag with its value needs
+  `REUSE-IgnoreStart`/`REUSE-IgnoreEnd` around it — see `CONTRIBUTING.md`.
 - CI: `.github/workflows/ci.yml` runs pre-commit, the GHC matrix on Linux and
   macOS building from the sdist tarball, and a coverage job that uploads to
   Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC

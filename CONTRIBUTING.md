@@ -58,13 +58,8 @@ files that CI then rejects.
 
 ## Attribution
 
-This project follows the [REUSE](https://reuse.software) specification: every
-file declares its copyright and license, either in an SPDX header at the top of
-the file or through an annotation in [`REUSE.toml`](REUSE.toml). Full license
-texts live in `LICENSES/`.
-
-Claim copyright on what you write by adding yourself to the
-`SPDX-FileCopyrightText` line of each file you touch. A file may carry several.
+Claim copyright by adding yourself to the `SPDX-FileCopyrightText` line of each
+file you touch. A file carries one such line per contributor.
 
 <!-- REUSE-IgnoreStart -->
 
@@ -76,9 +71,10 @@ Claim copyright on what you write by adding yourself to the
 
 <!-- REUSE-IgnoreEnd -->
 
-New files need the same two-line header. For a format that can't carry comments,
-add an annotation to `REUSE.toml` instead. The `reuse` pre-commit hook fails on
-any file that declares neither.
+This follows the [REUSE](https://reuse.software) specification: every file
+declares its own copyright and license. A new file needs the header above. A
+format that rejects comments takes an annotation in [`REUSE.toml`](REUSE.toml)
+instead. The `reuse` pre-commit hook fails on a file carrying neither.
 
 ## Releasing (maintainers)
 

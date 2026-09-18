@@ -1,7 +1,6 @@
 cabal-version:       3.0
 
--- cabal-version must be the first line of the file, so the SPDX header
--- follows it rather than opening the file.
+-- cabal-version must be the first line of the file; nothing may precede it.
 -- SPDX-FileCopyrightText: 2017 Alex Brandt <alunduil@alunduil.com>
 -- SPDX-License-Identifier: MIT
 

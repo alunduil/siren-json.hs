@@ -1,32 +1,26 @@
 # SPDX-FileCopyrightText: 2017 Alex Brandt <alunduil@alunduil.com>
 # SPDX-License-Identifier: MIT
 
-# Copyright and licensing for files that don't carry an inline SPDX header.
-
 version = 1
 SPDX-PackageName = "siren-json"
 SPDX-PackageSupplier = "Alex Brandt <alunduil@alunduil.com>"
 SPDX-PackageDownloadLocation = "https://github.com/alunduil/siren-json.hs"
 
-# Ours, declared here because the format rejects a header or renders one.
-
 [[annotations]]
 path = [
   "**.json",                # JSON admits no comments
-  ".markdownlint.jsonc",    # markdownlint-cli2 reads it as JSON in places
-  "**.md",                  # an HTML comment header shows in some viewers
-  ".gitignore",             # a header would read as a pattern comment
-  "LICENSE",                # copy of LICENSES/MIT.txt; GitHub's license
-                            # detector only matches root-level filenames
-  ".vale/styles/config/**", # our Vale vocabulary, not a vendored pack
+  "**.md",                  # README and CHANGELOG ship to Hackage verbatim
+  ".gitignore",
+  "LICENSE",                # duplicate of LICENSES/MIT.txt; GitHub's detector
+                            # only matches root-level filenames
+  ".vale/styles/config/**", # our vocabulary, not a vendored pack
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2017 Alex Brandt <alunduil@alunduil.com>"
 SPDX-License-Identifier = "MIT"
 
-# Vale style packs vendored by `vale sync`. Each pack carries its own
-# upstream author and license -- one stanza per pack, so adding or removing
-# a pack stays localised and a non-MIT pack surfaces in review instead of
+# Vendored by `vale sync`, each under its own upstream copyright and license.
+# One stanza per pack, so a non-MIT pack surfaces in review rather than
 # disappearing under an aggregate.
 
 [[annotations]]

@@ -17,9 +17,8 @@ repos:
         args: ["--fix=lf"]
       - id: check-yaml
 
-  # Every tracked file declares copyright and license, inline or via
-  # REUSE.toml. `reuse lint` reads the whole tree rather than a file list, so
-  # the top-level `exclude:` doesn't reach it and the vendored Vale styles are
+  # `reuse lint` reads the whole tree rather than a file list, so the
+  # top-level `exclude:` doesn't reach it; the vendored Vale styles are
   # covered by their own REUSE.toml stanzas.
   - repo: https://github.com/fsfe/reuse-tool
     rev: v6.2.0
