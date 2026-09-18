@@ -64,7 +64,7 @@ file you touch. A file carries one such line per contributor.
 <!-- REUSE-IgnoreStart -->
 
 ```haskell
--- SPDX-FileCopyrightText: 2017 Alex Brandt <alunduil@alunduil.com>
+-- SPDX-FileCopyrightText: 2017 Alex Brandt
 -- SPDX-FileCopyrightText: 2026 Your Name <you@example.com>
 -- SPDX-License-Identifier: MIT
 ```
