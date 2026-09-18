@@ -16,7 +16,7 @@ bug-reports:         https://github.com/alunduil/siren-json.hs/issues
 license:             MIT
 license-file:        LICENSE
 author:              Alex Brandt
-maintainer:          alunduil@alunduil.com
+maintainer:          alunduil@gmail.com
 copyright:           (c) 2017 Alex Brandt
 category:            Data
 build-type:          Simple
