@@ -36,7 +36,7 @@ repos:
   # Vale's documented setup pairs this with a `vale sync` hook. The styles
   # are vendored, so there is nothing to fetch.
   - repo: https://github.com/errata-ai/vale
-    rev: v3.21.0
+    rev: v3.22.0
     hooks:
       - id: vale
         # Vale exits nonzero on an error-severity finding whatever this level
