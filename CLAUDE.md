@@ -37,7 +37,8 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   macOS building from the sdist tarball, and a coverage job that uploads to
   Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC
   matrix drift and the external link sweep, each filing a tracking issue rather
-  than failing. Workflow files are named for
+  than failing. `daily.yml` sweeps stale pull requests, exempting the
+  `dependencies` label that `renovate.json` applies. Workflow files are named for
   *when* they run, not the tool (alunduil-chezmoi ADR 0004), so always-on
   sensors become jobs in `ci.yml` rather than new files. Sibling Haskell repos
   still use the older per-tool `pre-commit.yml` layout.

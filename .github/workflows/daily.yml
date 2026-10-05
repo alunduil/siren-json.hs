@@ -1,0 +1,55 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt
+# SPDX-License-Identifier: MIT
+
+name: Daily
+
+on:
+  workflow_dispatch:
+  schedule:
+    # On-the-hour schedules queue behind platform peak load.
+    - cron: "47 6 * * *"
+      timezone: "Europe/London"
+
+permissions:
+  contents: read
+
+concurrency:
+  # A cancelled sweep loses its resume point and restarts from the first pull
+  # request.
+  group: ${{ github.workflow }}
+
+jobs:
+  stale-pull-requests:
+    name: Prune stale pull requests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      # `actions: write` would only save the resume point; without it, a
+      # truncated run warns and restarts rather than failing.
+      issues: write
+      pull-requests: write
+    env:
+      STALE_DAYS: 30
+      CLOSE_DAYS: 14
+
+    steps:
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11
+        with:
+          days-before-issue-stale: -1
+          # Issues already labelled stale would still close without this.
+          days-before-issue-close: -1
+          days-before-pr-stale: ${{ env.STALE_DAYS }}
+          days-before-pr-close: ${{ env.CLOSE_DAYS }}
+          # Closing a Renovate pull request stops Renovate re-offering that
+          # version. renovate.json applies this label; Renovate applies none
+          # by default.
+          exempt-pr-labels: dependencies
+          stale-pr-message: >-
+            This has been quiet for ${{ env.STALE_DAYS }} days, so it's picked
+            up a stale label. A comment or a push clears the label and restarts
+            the clock. Otherwise this closes in another ${{ env.CLOSE_DAYS }}
+            days.
+          close-pr-message: >-
+            Closing this after ${{ env.CLOSE_DAYS }} more quiet days. That isn't a call on the change
+            itself, and nothing is lost: the branch stays where it is, so
+            comment here if you want to pick it back up and I'll reopen it.
