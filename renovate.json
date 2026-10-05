@@ -9,6 +9,9 @@
   "reviewers": [
     "alunduil"
   ],
+  "labels": [
+    "dependencies"
+  ],
   "pre-commit": {
     "enabled": true
   },
