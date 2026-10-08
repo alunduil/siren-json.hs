@@ -87,21 +87,12 @@ instance FromJSON SubEntity where
   parseJSON = withObject "SubEntity" $ \v ->
     asum
       [ EmbeddedLink <$> parseJSON (Object v)
-      , do
-          rEntity <- parseJSON (Object v)
-          rRel <- v .: "rel"
-
-          pure $ EmbeddedRepresentation Representation{..}
+      , EmbeddedRepresentation <$> parseJSON (Object v)
       ]
 
 instance ToJSON SubEntity where
   toJSON (EmbeddedLink l) = toJSON l
-  toJSON (EmbeddedRepresentation Representation{..}) = Object $ toObject rEntity <> KeyMap.fromList ["rel" .= rRel]
-   where
-    toObject :: ToJSON a => a -> Object
-    toObject v = case toJSON v of
-      Object o -> o
-      _ -> error "toObject: received non-Object"
+  toJSON (EmbeddedRepresentation r) = toJSON r
 
 -- | 'Entity' embedded in a parent 'Entity'.
 data Representation = Representation
@@ -109,6 +100,21 @@ data Representation = Representation
   , rRel :: [Text]
   }
   deriving (Eq, Show)
+
+instance FromJSON Representation where
+  parseJSON = withObject "Representation" $ \v -> do
+    rEntity <- parseJSON (Object v)
+    rRel <- v .: "rel"
+
+    pure Representation{..}
+
+instance ToJSON Representation where
+  toJSON Representation{..} = Object $ toObject rEntity <> KeyMap.fromList ["rel" .= rRel]
+   where
+    toObject :: ToJSON a => a -> Object
+    toObject v = case toJSON v of
+      Object o -> o
+      _ -> error "toObject: received non-Object"
 
 -- | Link to a related resource.
 data Link = Link

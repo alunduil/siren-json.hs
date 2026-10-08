@@ -27,7 +27,8 @@ and this project adheres to the
 - Move the fields of `EmbeddedRepresentation` into a new `Representation`
   type, so `SubEntity` becomes `EmbeddedLink Link | EmbeddedRepresentation
   Representation`. The partial selectors `sEntity` and `sRel` are now the total
-  `rEntity` and `rRel` on `Representation`. JSON encoding is unchanged.
+  `rEntity` and `rRel` on `Representation`, which has its own `FromJSON` and
+  `ToJSON` instances. JSON encoding is unchanged.
 
 ### Removed
 
