@@ -80,26 +80,36 @@ instance ToJSON Entity where
 -- | Nested object for an @application/vnd.siren+json@.
 data SubEntity
   = EmbeddedLink Link
-  | EmbeddedRepresentation
-      { sEntity :: Entity
-      , sRel :: [Text]
-      }
+  | EmbeddedRepresentation Representation
   deriving (Eq, Show)
 
 instance FromJSON SubEntity where
   parseJSON = withObject "SubEntity" $ \v ->
     asum
       [ EmbeddedLink <$> parseJSON (Object v)
-      , do
-          sEntity <- parseJSON (Object v)
-          sRel <- v .: "rel"
-
-          pure EmbeddedRepresentation{..}
+      , EmbeddedRepresentation <$> parseJSON (Object v)
       ]
 
 instance ToJSON SubEntity where
   toJSON (EmbeddedLink l) = toJSON l
-  toJSON EmbeddedRepresentation{..} = Object $ toObject sEntity <> KeyMap.fromList ["rel" .= sRel]
+  toJSON (EmbeddedRepresentation r) = toJSON r
+
+-- | 'Entity' embedded in a parent 'Entity'.
+data Representation = Representation
+  { rEntity :: Entity
+  , rRel :: [Text]
+  }
+  deriving (Eq, Show)
+
+instance FromJSON Representation where
+  parseJSON = withObject "Representation" $ \v -> do
+    rEntity <- parseJSON (Object v)
+    rRel <- v .: "rel"
+
+    pure Representation{..}
+
+instance ToJSON Representation where
+  toJSON Representation{..} = Object $ toObject rEntity <> KeyMap.fromList ["rel" .= rRel]
    where
     toObject :: ToJSON a => a -> Object
     toObject v = case toJSON v of

@@ -72,7 +72,7 @@ minimalEmbeddedRepresentation :: Minimal SubEntity
 minimalEmbeddedRepresentation =
   Minimal
     "SubEntity_EmbeddedRepresentation"
-    (EmbeddedRepresentation entity [])
+    (EmbeddedRepresentation (Representation entity []))
     "{\"rel\":[]}"
  where
   Minimal _ entity _ = minimalEntity
@@ -116,6 +116,7 @@ propertiesTests =
     [ testProperty "Field" (roundtrips :: Field -> Bool)
     , testProperty "Action" (roundtrips :: Action -> Bool)
     , testProperty "Link" (roundtrips :: Link -> Bool)
+    , testProperty "Representation" (roundtrips :: Representation -> Bool)
     , testProperty "SubEntity" (roundtrips :: SubEntity -> Bool)
     , testProperty "Entity" (roundtrips :: Entity -> Bool)
     ]

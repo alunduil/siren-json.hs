@@ -38,7 +38,10 @@ instance Norm Entity where
 
 instance Norm SubEntity where
   normalize (EmbeddedLink l) = EmbeddedLink $ normalize l
-  normalize EmbeddedRepresentation{..} = EmbeddedRepresentation (normalize sEntity) sRel
+  normalize (EmbeddedRepresentation r) = EmbeddedRepresentation $ normalize r
+
+instance Norm Representation where
+  normalize Representation{..} = Representation (normalize rEntity) rRel
 
 instance Norm Link
 

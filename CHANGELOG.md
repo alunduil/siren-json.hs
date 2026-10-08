@@ -13,6 +13,7 @@ and this project adheres to the
 - Expose `External.Network.HTTP.Media.MediaType.JSON` and
   `External.Network.HTTP.Types.Method.JSON`, which supply the orphan
   `FromJSON` and `ToJSON` instances for `MediaType` and `StdMethod`.
+- Add `FromJSON` and `ToJSON` instances for `Representation`.
 
 ### Changed
 
@@ -24,6 +25,9 @@ and this project adheres to the
   with relative references no longer decode.
 - Point `maintainer` at a delivering address. The previous one was dead, so
   Hackage showed a contact that discarded every message sent to it.
+- Replace the partial selectors `sEntity` and `sRel` with `rEntity` and `rRel`
+  on a new `Representation` type, which `EmbeddedRepresentation` now wraps. The
+  JSON encoding is unchanged.
 
 ### Removed
 
