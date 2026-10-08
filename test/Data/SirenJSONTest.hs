@@ -72,7 +72,7 @@ minimalEmbeddedRepresentation :: Minimal SubEntity
 minimalEmbeddedRepresentation =
   Minimal
     "SubEntity_EmbeddedRepresentation"
-    (EmbeddedRepresentation entity [])
+    (EmbeddedRepresentation (Representation entity []))
     "{\"rel\":[]}"
  where
   Minimal _ entity _ = minimalEntity

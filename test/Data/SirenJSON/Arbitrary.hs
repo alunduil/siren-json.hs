@@ -43,26 +43,32 @@ instance Arbitrary Entity where
     mapMaybe e eEntities
       ++ [Entity eClass' eProperties' eEntities' eLinks' eActions' eTitle' | (eClass', eProperties', eEntities', eLinks', eActions', eTitle') <- shrink (eClass, eProperties, eEntities, eLinks, eActions, eTitle)]
    where
-    e EmbeddedRepresentation{..} = Just sEntity
+    e (EmbeddedRepresentation Representation{..}) = Just rEntity
     e _ = Nothing
 
 instance Arbitrary SubEntity where
   arbitrary =
     oneof
       [ EmbeddedLink <$> arbitrary
-      , EmbeddedRepresentation
-          <$> scale (`div` 2) arbitrary
-          <*> arbitrary
+      , EmbeddedRepresentation <$> arbitrary
       ]
 
   shrink (EmbeddedLink l) = [EmbeddedLink l' | l' <- shrink l]
-  shrink EmbeddedRepresentation{..} =
-    map EmbeddedLink (eLinks sEntity)
-      ++ filter isEntity (eEntities sEntity)
-      ++ [EmbeddedRepresentation sEntity' sRel' | (sEntity', sRel') <- shrink (sEntity, sRel)]
+  shrink (EmbeddedRepresentation r@Representation{..}) =
+    map EmbeddedLink (eLinks rEntity)
+      ++ filter isEntity (eEntities rEntity)
+      ++ map EmbeddedRepresentation (shrink r)
    where
-    isEntity (EmbeddedRepresentation _ _) = True
+    isEntity (EmbeddedRepresentation _) = True
     isEntity _ = False
+
+instance Arbitrary Representation where
+  arbitrary =
+    Representation
+      <$> scale (`div` 2) arbitrary
+      <*> arbitrary
+
+  shrink Representation{..} = [Representation rEntity' rRel' | (rEntity', rRel') <- shrink (rEntity, rRel)]
 
 instance Arbitrary Link where
   arbitrary =

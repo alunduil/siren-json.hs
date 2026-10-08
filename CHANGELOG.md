@@ -24,6 +24,10 @@ and this project adheres to the
   with relative references no longer decode.
 - Point `maintainer` at a delivering address. The previous one was dead, so
   Hackage showed a contact that discarded every message sent to it.
+- Move the fields of `EmbeddedRepresentation` into a new `Representation`
+  type, so `SubEntity` becomes `EmbeddedLink Link | EmbeddedRepresentation
+  Representation`. The partial selectors `sEntity` and `sRel` are now the total
+  `rEntity` and `rRel` on `Representation`. JSON encoding is unchanged.
 
 ### Removed
 
