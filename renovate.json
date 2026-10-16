@@ -16,24 +16,8 @@
     "enabled": true
   },
   "minimumReleaseAge": "3 days",
-  // Hackage reports no release timestamps, so requiring one holds every
-  // cabal update forever.
+  // Hackage releases, pins, digests, and lockfile maintenance carry no
+  // release timestamp, so requiring one holds those updates forever.
   "minimumReleaseAgeBehaviour": "timestamp-optional",
-  "osvVulnerabilityAlerts": true,
-  "packageRules": [
-    {
-      "description": "Exempt update types that carry no release timestamp from the minimum release-age bake, so their renovate/stability-days check can resolve under internalChecksFilter:strict",
-      "matchUpdateTypes": [
-        "pin",
-        "pinDigest",
-        "digest",
-        "lockFileMaintenance",
-        "lockfileUpdate",
-        "rollback",
-        "bump",
-        "replacement"
-      ],
-      "minimumReleaseAge": null
-    }
-  ]
+  "osvVulnerabilityAlerts": true
 }
