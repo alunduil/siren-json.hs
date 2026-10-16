@@ -92,7 +92,7 @@ test-suite siren-json-tests
 
   build-depends:
       network-arbitrary    >= 1.0  && < 1.1
-    , QuickCheck           >= 2.14 && < 2.19
+    , QuickCheck >=2.14 && <2.20
     , quickcheck-instances >= 0.3  && < 0.5
     , siren-json
     , tasty                >= 1.5  && < 1.6
