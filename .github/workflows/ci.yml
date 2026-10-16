@@ -84,7 +84,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        # The linker on macos-26 rejects the arm64e.x1 stubs in its MacOSX
+        # 27.0 SDK (#253).
+        os: [ubuntu-latest, macos-15]
         ghc: ["9.6", "9.8", "9.10", "9.12", "9.14"]
 
     steps:
