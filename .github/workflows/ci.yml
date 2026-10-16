@@ -204,3 +204,19 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ${{ steps.report.outputs.report }}
           fail_ci_if_error: true
+
+  # The default-branch ruleset requires this job by name, so renaming it breaks
+  # the merge gate. The build cells' names change with the GHC matrix.
+  results:
+    name: Check CI results
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    needs: [pre-commit, build, coverage]
+    if: always()
+
+    steps:
+      # Without always(), this step is skipped when a needed job is cancelled,
+      # and the job passes.
+      - name: Fail when any job did not succeed
+        if: always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped'))
+        run: exit 1
