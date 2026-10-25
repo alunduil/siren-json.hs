@@ -21,7 +21,7 @@ concurrency:
 jobs:
   stale-pull-requests:
     name: Prune stale pull requests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     permissions:
       # `actions: write` would only save the resume point; without it, a
