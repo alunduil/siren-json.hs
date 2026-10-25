@@ -78,16 +78,23 @@ jobs:
 
   build:
     name: GHC ${{ matrix.ghc }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-${{ matrix.OS_VERSION }}
     timeout-minutes: 30
 
     strategy:
       fail-fast: false
       matrix:
-        # The linker on macos-26 rejects the arm64e.x1 stubs in its MacOSX
-        # 27.0 SDK (#253).
-        os: [ubuntu-latest, macos-15]
+        os: [ubuntu, macos]
         ghc: ["9.6", "9.8", "9.10", "9.12", "9.14"]
+        include:
+          - os: ubuntu
+            # renovate: datasource=github-runners depName=ubuntu
+            OS_VERSION: "26.04"
+          - os: macos
+            # The linker on macos-26 rejects the arm64e.x1 stubs in its MacOSX
+            # 27.0 SDK (#253).
+            # renovate: datasource=github-runners depName=macos
+            OS_VERSION: "15"
 
     steps:
       - name: Checkout
@@ -159,7 +166,7 @@ jobs:
 
   coverage:
     name: Coverage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
 
     steps:
