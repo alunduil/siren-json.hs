@@ -95,6 +95,10 @@ jobs:
             # 27.0 SDK (#253).
             # renovate: datasource=github-runners depName=macos
             OS_VERSION: "15"
+          # Metadata and docs don't vary by GHC or OS, so one leg checks them.
+          - os: ubuntu
+            ghc: "9.14"
+            package-checks: true
 
     steps:
       - name: Checkout
@@ -157,10 +161,12 @@ jobs:
         run: cabal test all --enable-tests --test-show-details=direct $ALLOW_NEWER
 
       - name: Check package metadata
+        if: matrix.package-checks
         working-directory: sdist-build
         run: cabal check
 
       - name: Haddock
+        if: matrix.package-checks
         working-directory: sdist-build
         run: cabal haddock all $ALLOW_NEWER
 
@@ -174,6 +180,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up GHC
+        id: setup
         uses: haskell-actions/setup@0f8e8c99d88aeb3fbfd523f1ef2c6f762d10d64d # v2.12.1
         with:
           ghc-version: "9.14"
@@ -190,6 +197,29 @@ jobs:
       # inherit ALLOW_NEWER.
       - name: Configure with coverage
         run: cabal configure --enable-tests --enable-coverage $ALLOW_NEWER
+
+      - name: Generate build plan
+        run: cabal build all --dry-run
+
+      - name: Restore cabal store
+        id: cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        env:
+          key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-cabal-${{ steps.setup.outputs.cabal-version }}
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ env.key }}-plan-${{ hashFiles('dist-newstyle/cache/plan.json') }}
+          restore-keys: ${{ env.key }}-
+
+      - name: Install dependencies
+        run: cabal build all --only-dependencies
+
+      - name: Save cabal store
+        if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ steps.cache.outputs.cache-primary-key }}
 
       - name: Build
         run: cabal build all
