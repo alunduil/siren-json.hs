@@ -95,8 +95,7 @@ jobs:
             # 27.0 SDK (#253).
             # renovate: datasource=github-runners depName=macos
             OS_VERSION: "15"
-          # Metadata and docs don't vary by GHC or OS, and haddock is slow:
-          # it rebuilds every dependency with documentation.
+          # Metadata and docs don't vary by GHC or OS, so one leg checks them.
           - os: ubuntu
             ghc: "9.14"
             package-checks: true
