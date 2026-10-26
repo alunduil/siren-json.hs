@@ -94,7 +94,7 @@ jobs:
             # The linker on macos-26 rejects the arm64e.x1 stubs in its MacOSX
             # 27.0 SDK (#253).
             # renovate: datasource=github-runners depName=macos
-            OS_VERSION: "15"
+            OS_VERSION: "26"
           # Metadata and docs don't vary by GHC or OS, so one leg checks them.
           - os: ubuntu
             ghc: "9.14"
