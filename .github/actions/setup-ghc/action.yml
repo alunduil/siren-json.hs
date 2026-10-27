@@ -33,7 +33,7 @@ runs:
         GHC: ${{ inputs.ghc-version }}
         CABAL: ${{ inputs.cabal-version }}
       run: |
-        ghc=$("$GITHUB_ACTION_PATH/../../scripts/resolve-ghc.sh" "$GHC")
+        ghc=$("$GITHUB_ACTION_PATH/resolve-ghc.sh" "$GHC")
         ghcup="${GHCUP_INSTALL_BASE_PREFIX:-$HOME}/.ghcup"
         # ghcup treats cabal-install without its db records as not
         # installed, then fails to reinstall over the restored files.
