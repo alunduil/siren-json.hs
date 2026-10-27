@@ -12,9 +12,14 @@ if [[ ! $1 =~ ^[0-9]+\.[0-9]+$ ]]; then
   exit 0
 fi
 
-if ! curl -fsSL https://raw.githubusercontent.com/haskell/ghcup-metadata/master/ghcup-0.1.0.yaml \
-  | yq '.ghcupDownloads.GHC.toolVersions | keys | .[]' \
-  | grep -E "^${1//./\\.}\.[0-9]+$" | sort -V | tail -n1 | grep .; then
+versions=$(curl -fsSL https://raw.githubusercontent.com/haskell/ghcup-metadata/master/ghcup-0.1.0.yaml \
+  | yq '.ghcupDownloads.GHC.toolVersions | keys | .[]')
+
+newest=$(grep -E "^${1//./\\.}\.[0-9]+$" <<<"$versions" | sort -V | tail -n1 || true)
+
+if [[ -z $newest ]]; then
   echo "no GHC release found in series $1" >&2
   exit 1
 fi
+
+echo "$newest"
