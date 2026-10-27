@@ -31,35 +31,44 @@ runs:
       shell: bash
       env:
         GHC: ${{ inputs.ghc-version }}
-        CABAL: ${{ inputs.cabal-version }}
       run: |
         ghc=$("$GITHUB_ACTION_PATH/resolve-ghc.sh" "$GHC")
+        echo "ghc=$ghc" >> "$GITHUB_OUTPUT"
+
+    - name: Plan toolchain cache
+      id: plan
+      shell: bash
+      env:
+        GHC: ${{ steps.resolve.outputs.ghc }}
+        CABAL: ${{ inputs.cabal-version }}
+      run: |
         ghcup="${GHCUP_INSTALL_BASE_PREFIX:-$HOME}/.ghcup"
         # ghcup treats cabal-install without its db records as not
         # installed, then fails to reinstall over the restored files.
         paths=("$ghcup/cabal/$CABAL" "$ghcup/db/cabal/$CABAL*")
         # A GHC the runner image ships is already on disk, so caching it
         # only spends cache budget.
-        if [ ! -d "$ghcup/ghc/$ghc" ]; then
-          paths+=("$ghcup/ghc/$ghc")
+        if [ ! -d "$ghcup/ghc/$GHC" ]; then
+          paths+=("$ghcup/ghc/$GHC")
         fi
         {
-          echo "ghc=$ghc"
-          echo "key=ghcup-${ImageOS:?}-${ImageVersion:?}-$RUNNER_ARCH-ghc-$ghc-cabal-$CABAL"
+          echo "key=ghcup-${ImageOS:?}-${ImageVersion:?}-$RUNNER_ARCH-ghc-$GHC-cabal-$CABAL"
           echo "paths<<EOF"
           printf '%s\n' "${paths[@]}"
           echo "EOF"
         } >> "$GITHUB_OUTPUT"
         # setup counts a restored toolchain as installed only if this
-        # directory exists, and restoring doesn't create it.
+        # directory exists, and restoring doesn't create it. setup checks
+        # under $HOME even where ghcup installs under
+        # GHCUP_INSTALL_BASE_PREFIX, so this isn't $ghcup/bin.
         mkdir -p "$HOME/.ghcup/bin"
 
     - name: Restore toolchain
       id: cache
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: ${{ steps.resolve.outputs.paths }}
-        key: ${{ steps.resolve.outputs.key }}
+        path: ${{ steps.plan.outputs.paths }}
+        key: ${{ steps.plan.outputs.key }}
 
     - name: Install toolchain
       id: setup
@@ -72,5 +81,5 @@ runs:
       if: steps.cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: ${{ steps.resolve.outputs.paths }}
+        path: ${{ steps.plan.outputs.paths }}
         key: ${{ steps.cache.outputs.cache-primary-key }}
