@@ -52,9 +52,10 @@ files that CI then rejects.
   are squash-merged, so keep the branch focused on one change.
 - Open the pull request as a draft until it's ready for review.
 - Follow the [seven rules of a great commit message](https://cbea.ms/git-commit/).
-- This library targets the `1.0.0.0` API-commitment milestone. Changes to the
-  module export list force a major [PVP](https://pvp.haskell.org/) version bump,
-  so avoid adding or removing exports as a side effect of an unrelated change.
+- Changes to the module export list drive the
+  [PVP](https://pvp.haskell.org/) version: removing or changing an export is a
+  major bump, adding one is a minor bump. Avoid export changes as a side effect
+  of an unrelated change.
 
 ## Attribution
 
