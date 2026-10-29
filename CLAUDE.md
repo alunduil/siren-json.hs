@@ -15,7 +15,7 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 - Publish: manual, by a maintainer — `cabal sdist` then `cabal upload
   --publish`. Steps in `CONTRIBUTING.md`.
 - Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`. Under PVP `0.x`
-  releases are already stable; the `1.0.0.0` milestone marks a reviewed,
+  releases are already stable; `1.0.0.0` is the release that ships a reviewed,
   fully documented export list, not a stability change.
 - Dependency updates: Renovate (`renovate.json`).
 - Lint / format: `pre-commit run --all-files` — `fourmolu` and `hlint` over the
