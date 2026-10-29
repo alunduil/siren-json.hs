@@ -14,9 +14,9 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   `test/Main.hs`).
 - Publish: manual, by a maintainer — `cabal sdist` then `cabal upload
   --publish`. Steps in `CONTRIBUTING.md`.
-- Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`. Under PVP `0.x`
-  releases are already stable; `1.0.0.0` is the release that ships a reviewed,
-  fully documented export list, not a stability change.
+- Versioning: Haskell PVP (`A.B.C.D`) — current `0.3.1.1`; `1.0.0.0` ships a
+  reviewed, fully documented export list. Export-list bump rules in
+  `CONTRIBUTING.md`.
 - Dependency updates: Renovate (`renovate.json`).
 - Lint / format: `pre-commit run --all-files` — `fourmolu` and `hlint` over the
   Haskell sources (`fourmolu.yaml`, `.hlint.yaml`), `markdownlint`
@@ -47,9 +47,7 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
 
 ## Scope discipline
 
-PVP ties the version to the export list: removing or changing an export is a
-major bump (`A.B`), adding one is a minor bump (`C`). Keep export changes out
-of unrelated work so each bump is deliberate.
+Keep export changes out of unrelated work so each version bump is deliberate.
 
 - Before opening a PR, confirm the diff doesn't bleed into sibling issues; if
   uncertain, ask.
