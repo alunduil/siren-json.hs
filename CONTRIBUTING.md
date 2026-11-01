@@ -39,11 +39,11 @@ pre-commit run --all-files    # run all hooks against the repo
 pre-commit autoupdate         # bump third-party hook revs
 ```
 
-The [`fourmolu`](https://github.com/fourmolu/fourmolu),
+Run [`mise install`](https://mise.jdx.dev) to put the
+[`fourmolu`](https://github.com/fourmolu/fourmolu),
 [`hlint`](https://github.com/ndmitchell/hlint), and
-[lychee](https://lychee.cli.rs) hooks run whatever is on your PATH. Run
-[`mise install`](https://mise.jdx.dev) to get the versions CI uses, pinned in
-`mise.toml`. `fourmolu` formats differently between releases, so a mismatch
+[lychee](https://lychee.cli.rs) versions CI uses on your PATH, where their
+hooks look for them. `fourmolu` formats differently between releases, so a mismatch
 leaves the hook rewriting files that CI then rejects.
 
 ## Pull requests
