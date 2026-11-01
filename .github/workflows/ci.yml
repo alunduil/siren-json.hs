@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Set up fourmolu, HLint, and lychee
+      - name: Set up mise tools
         uses: jdx/mise-action@6612f0ef07ed2a736cd1e00a94a065522dd41195 # v5.2.5
 
       # SHA pinning is enforced transitively, so a replacement must pin the

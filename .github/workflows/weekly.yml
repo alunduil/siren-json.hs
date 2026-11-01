@@ -143,9 +143,9 @@ jobs:
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        # Explicit bash enables pipefail; without it tee masks lychee's exit.
-        shell: bash
         run: |
+          set -euo pipefail
+
           mkdir -p lychee
           lychee --config lychee.toml --no-progress --mode task --format markdown './**/*.md' \
             | tee lychee/out.md "$GITHUB_STEP_SUMMARY"
