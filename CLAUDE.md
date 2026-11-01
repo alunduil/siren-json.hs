@@ -16,7 +16,8 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   --publish`. Steps in `CONTRIBUTING.md`.
 - Versioning: Haskell PVP (`A.B.C.D`); export-list bump rules in
   `CONTRIBUTING.md`.
-- Dependency updates: Renovate (`renovate.json`).
+- Dependency updates: Renovate (`renovate.json`). Change shared policy in
+  `alunduil/renovate-config`; `renovate.json` takes repo-specific settings only.
 - Lint / format: `pre-commit run --all-files` — `fourmolu` and `hlint` over the
   Haskell sources (`fourmolu.yaml`, `.hlint.yaml`), `markdownlint`
   (`.markdownlint.jsonc`) and Vale (`.vale.ini`, styles checked in under
@@ -37,8 +38,8 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   macOS building from the sdist tarball, and a coverage job that uploads to
   Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC
   matrix drift and the external link sweep, each filing a tracking issue rather
-  than failing. `daily.yml` sweeps stale pull requests, exempting the
-  `dependencies` label that `renovate.json` applies. Workflow files are named for
+  than failing. `daily.yml` sweeps stale pull requests, exempting
+  Renovate's `dependencies` label. Workflow files are named for
   *when* they run, not the tool (alunduil-chezmoi ADR 0004), so always-on
   sensors become jobs in `ci.yml` rather than new files. Sibling Haskell repos
   still use the older per-tool `pre-commit.yml` layout.
