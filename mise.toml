@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt
+# SPDX-License-Identifier: MIT
+
+[settings]
+locked = true
+lockfile_platforms = ["linux-x64"]
+
+# mise's registry has no aqua entry for fourmolu or hlint.
+[tools]
+"github:fourmolu/fourmolu" = "0.21.0.0"
+"github:ndmitchell/hlint" = "3.10"
+lychee = "0.24.2"
