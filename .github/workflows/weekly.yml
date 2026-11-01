@@ -132,17 +132,28 @@ jobs:
           key: lychee-${{ github.sha }}
           restore-keys: lychee-
 
+      - name: Set up lychee
+        uses: jdx/mise-action@6612f0ef07ed2a736cd1e00a94a065522dd41195 # v5.2.5
+        with:
+          install_args: lychee
+
+      # The token lifts GitHub's anonymous rate limit on github.com links.
       - name: Check links
         id: lychee
-        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
-        with:
-          args: --config lychee.toml "./**/*.md"
-          fail: false
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p lychee
+          lychee --config lychee.toml --no-progress --mode task --format markdown './**/*.md' \
+            | tee lychee/out.md "$GITHUB_STEP_SUMMARY"
 
       # create-an-issue reads the title and labels from front matter, which
       # lychee's report has no way to carry.
       - name: Compose broken-links issue
-        if: steps.lychee.outputs.exit_code != 0
+        if: steps.lychee.outcome == 'failure'
         run: |
           set -euo pipefail
 
@@ -156,7 +167,7 @@ jobs:
           cat lychee/out.md >> broken-links-issue.md
 
       - name: File or refresh broken-links issue
-        if: steps.lychee.outputs.exit_code != 0
+        if: steps.lychee.outcome == 'failure'
         uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
         env:
           GITHUB_TOKEN: ${{ github.token }}

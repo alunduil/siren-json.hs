@@ -51,9 +51,7 @@ repos:
       - id: renovate-config-validator
         args: [--strict, --no-global]
 
-  # Renovate's pre-commit manager tracks only hooks carrying a `rev:`, so the
-  # pinned fourmolu, hlint, and lychee versions live in
-  # `.github/workflows/ci.yml`.
+  # fourmolu, hlint, and lychee are pinned in `mise.toml`.
   - repo: local
     hooks:
       - id: fourmolu

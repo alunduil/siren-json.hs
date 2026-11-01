@@ -26,8 +26,8 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   links, `renovate-config-validator` (`--strict --no-global`), `reuse lint`
   (`REUSE.toml`, `LICENSES/`), and the
   whitespace/YAML hygiene set. `fourmolu`, `hlint`, and `lychee` run from PATH;
-  CI's pre-commit job installs the versions it pins. Vale gates on
-  error-severity findings; its alert level only sets what prints.
+  `mise install` provides the versions CI pins in `mise.toml`.
+  Vale gates on error-severity findings; its alert level only sets what prints.
   `CODE_OF_CONDUCT.md` is boilerplate and exempt from both Markdown linters.
 - Licensing: REUSE. A new file needs an SPDX header naming
   `SPDX-FileCopyrightText` and `SPDX-License-Identifier` (MIT); Markdown, JSON,

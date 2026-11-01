@@ -1,4 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>alunduil/renovate-config"]
+  "extends": ["github>alunduil/renovate-config"],
+  "packageRules": [
+    {
+      "description": "Default versioning never offers four-component PVP versions, and release tags carry a v that mise.toml omits.",
+      "matchManagers": ["mise"],
+      "matchPackageNames": ["fourmolu/fourmolu", "ndmitchell/hlint"],
+      "versioning": "loose",
+      "extractVersion": "^v(?<version>.+)$"
+    }
+  ]
 }
