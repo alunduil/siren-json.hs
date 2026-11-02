@@ -21,7 +21,7 @@ repos:
   # top-level `exclude:` doesn't reach it; the vendored Vale styles are
   # covered by their own REUSE.toml stanzas.
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v6.2.0
+    rev: v6.3.0
     hooks:
       - id: reuse
 
