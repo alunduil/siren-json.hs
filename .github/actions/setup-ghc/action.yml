@@ -39,8 +39,10 @@ runs:
         if [ ! -d "$ghcup/ghc/$GHC" ]; then
           paths+=("$ghcup/ghc/$GHC")
         fi
+        # GitHub ships a new runner image build weekly and serves several at
+        # once, so a key per build misses on every cell each week.
         {
-          echo "key=ghcup-${ImageOS:?}-${ImageVersion:?}-$RUNNER_ARCH-ghc-$GHC-cabal-$CABAL"
+          echo "key=ghcup-${ImageOS:?}-$RUNNER_ARCH-ghc-$GHC-cabal-$CABAL"
           echo "paths<<EOF"
           printf '%s\n' "${paths[@]}"
           echo "EOF"
