@@ -45,7 +45,7 @@ jobs:
       - uses: tox-dev/action-pre-commit-uv@ae5b217f46f65d48b20a76b902d7950c745171af # v1.1.1
 
   build:
-    name: GHC ${{ matrix.ghc }} / ${{ matrix.os }}
+    name: GHC ${{ matrix.ghc.GHC_VERSION }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}-${{ matrix.OS_VERSION }}
     timeout-minutes: 30
 
@@ -53,7 +53,22 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        ghc: ["9.6", "9.8", "9.10", "9.12", "9.14"]
+        # Renovate's annotation must precede a *_VERSION key, so each entry is
+        # a map rather than a bare version.
+        ghc:
+          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+            GHC_VERSION: "9.6.7"
+          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+            GHC_VERSION: "9.8.4"
+          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+            GHC_VERSION: "9.10.3"
+          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+            GHC_VERSION: "9.12.4"
+          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+            GHC_VERSION: "9.14.1"
+            # Metadata and docs don't vary by GHC or OS, so one leg checks
+            # them.
+            package-checks: true
         include:
           - os: ubuntu
             # renovate: datasource=github-runners depName=ubuntu
@@ -61,10 +76,6 @@ jobs:
           - os: macos
             # renovate: datasource=github-runners depName=macos
             OS_VERSION: "26"
-          # Metadata and docs don't vary by GHC or OS, so one leg checks them.
-          - os: ubuntu
-            ghc: "9.14"
-            package-checks: true
 
     steps:
       - name: Checkout
@@ -74,7 +85,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-ghc
         with:
-          ghc-version: ${{ matrix.ghc }}
+          ghc-version: ${{ matrix.ghc.GHC_VERSION }}
           cabal-version: ${{ env.CABAL_VERSION }}
 
       - name: Update Hackage index
@@ -127,12 +138,12 @@ jobs:
         run: cabal test all --enable-tests --test-show-details=direct $ALLOW_NEWER
 
       - name: Check package metadata
-        if: matrix.package-checks
+        if: matrix.ghc.package-checks && matrix.os == 'ubuntu'
         working-directory: sdist-build
         run: cabal check
 
       - name: Haddock
-        if: matrix.package-checks
+        if: matrix.ghc.package-checks && matrix.os == 'ubuntu'
         working-directory: sdist-build
         run: cabal haddock all $ALLOW_NEWER
 

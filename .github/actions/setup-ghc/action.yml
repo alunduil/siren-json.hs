@@ -6,7 +6,7 @@ description: Install GHC and cabal-install with haskell-actions/setup, restoring
 
 inputs:
   ghc-version:
-    description: A GHC major series such as 9.12, or an exact release.
+    description: An exact GHC release, which the toolchain cache key names.
     required: true
   cabal-version:
     description: An exact cabal-install release.
@@ -23,29 +23,24 @@ outputs:
 runs:
   using: composite
   steps:
-    # setup reports the exact GHC release only after installing it, so a
-    # key built from a series would restore the previous patch release
-    # after a new one ships.
-    - name: Resolve GHC release
+    - name: Plan toolchain cache
       id: resolve
       shell: bash
       env:
         GHC: ${{ inputs.ghc-version }}
         CABAL: ${{ inputs.cabal-version }}
       run: |
-        ghc=$("$GITHUB_ACTION_PATH/../../scripts/resolve-ghc.sh" "$GHC")
         ghcup="${GHCUP_INSTALL_BASE_PREFIX:-$HOME}/.ghcup"
         # ghcup treats cabal-install without its db records as not
         # installed, then fails to reinstall over the restored files.
         paths=("$ghcup/cabal/$CABAL" "$ghcup/db/cabal/$CABAL*")
         # A GHC the runner image ships is already on disk, so caching it
         # only spends cache budget.
-        if [ ! -d "$ghcup/ghc/$ghc" ]; then
-          paths+=("$ghcup/ghc/$ghc")
+        if [ ! -d "$ghcup/ghc/$GHC" ]; then
+          paths+=("$ghcup/ghc/$GHC")
         fi
         {
-          echo "ghc=$ghc"
-          echo "key=ghcup-${ImageOS:?}-${ImageVersion:?}-$RUNNER_ARCH-ghc-$ghc-cabal-$CABAL"
+          echo "key=ghcup-${ImageOS:?}-${ImageVersion:?}-$RUNNER_ARCH-ghc-$GHC-cabal-$CABAL"
           echo "paths<<EOF"
           printf '%s\n' "${paths[@]}"
           echo "EOF"
@@ -68,7 +63,7 @@ runs:
       id: setup
       uses: haskell-actions/setup@0f8e8c99d88aeb3fbfd523f1ef2c6f762d10d64d # v2.12.1
       with:
-        ghc-version: ${{ steps.resolve.outputs.ghc }}
+        ghc-version: ${{ inputs.ghc-version }}
         cabal-version: ${{ inputs.cabal-version }}
 
     - name: Save toolchain

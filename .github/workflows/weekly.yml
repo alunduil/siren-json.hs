@@ -49,8 +49,8 @@ jobs:
           }
 
           matrix_series() {
-            yq '.jobs.build.strategy.matrix.ghc[]' \
-              .github/workflows/ci.yml | sort -V || true
+            yq '.jobs.build.strategy.matrix.ghc[].GHC_VERSION' \
+              .github/workflows/ci.yml | sed -E 's/\.[0-9]+$//' | sort -V || true
           }
 
           tested_with_series() {
