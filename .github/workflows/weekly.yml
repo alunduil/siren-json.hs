@@ -13,13 +13,17 @@ on:
     # GitHub applies `timezone`, DST included, so this stays 18:00 local.
     - cron: "0 18 * * 5"
       timezone: "Europe/London"
+  # Pull requests run the checks to test changes to this workflow before
+  # merge. No paths filter: a required check must report on every pull request.
+  pull_request:
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
-  group: ${{ github.workflow }}
+  # Each pull request gets its own group so its run never waits on the
+  # scheduled one or cancels another pull request's.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: false
 
 jobs:
@@ -27,6 +31,8 @@ jobs:
     name: Check GHC matrix drift
     runs-on: ubuntu-26.04
     timeout-minutes: 10
+    outputs:
+      issue: ${{ steps.check.outputs.issue }}
 
     steps:
       - name: Checkout
@@ -79,12 +85,7 @@ jobs:
           tested=$(tested_with_series)
           require_series "siren-json.cabal tested-with" "$tested"
 
-          drift=false
-          [ "$expected" = "$matrix" ] || drift=true
-          [ "$expected" = "$tested" ] || drift=true
-          echo "drift=$drift" >> "$GITHUB_OUTPUT"
-
-          [ "$drift" = true ] || exit 0
+          [ "$expected" = "$matrix" ] && [ "$expected" = "$tested" ] && exit 0
 
           # create-an-issue reads the title and labels from front matter.
           cat > ghc-drift-issue.md <<EOF
@@ -107,8 +108,33 @@ jobs:
           (CI/packaging-only is a patch).
           EOF
 
+          delimiter=$(openssl rand -hex 16)
+          {
+            echo "issue<<$delimiter"
+            cat ghc-drift-issue.md
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+
+  # Filing jobs are separate so the checks, which pull requests run, never hold
+  # issues: write.
+  file-drift-issue:
+    name: File GHC matrix drift issue
+    needs: drift
+    if: >-
+      needs.drift.outputs.issue != ''
+      && github.event_name != 'pull_request'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      issues: write
+
+    steps:
+      - name: Write drift issue
+        env:
+          ISSUE: ${{ needs.drift.outputs.issue }}
+        run: printf '%s\n' "$ISSUE" > ghc-drift-issue.md
+
       - name: File or refresh drift issue
-        if: steps.check.outputs.drift == 'true'
         uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -120,6 +146,8 @@ jobs:
     name: Check links
     runs-on: ubuntu-26.04
     timeout-minutes: 10
+    outputs:
+      issue: ${{ steps.compose.outputs.issue }}
 
     steps:
       - name: Checkout
@@ -137,10 +165,12 @@ jobs:
         with:
           install_args: lychee
 
-      # The token lifts GitHub's anonymous rate limit on github.com links.
+      # Only a pull request fails on a dead link; other runs go on to file an
+      # issue. The token lifts GitHub's anonymous rate limit on github.com
+      # links.
       - name: Check links
         id: lychee
-        continue-on-error: true
+        continue-on-error: ${{ github.event_name != 'pull_request' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -153,6 +183,7 @@ jobs:
       # create-an-issue reads the title and labels from front matter, which
       # lychee's report has no way to carry.
       - name: Compose broken-links issue
+        id: compose
         if: steps.lychee.outcome == 'failure'
         run: |
           set -euo pipefail
@@ -166,8 +197,31 @@ jobs:
           EOF
           cat lychee/out.md >> broken-links-issue.md
 
+          delimiter=$(openssl rand -hex 16)
+          {
+            echo "issue<<$delimiter"
+            cat broken-links-issue.md
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+
+  file-links-issue:
+    name: File broken-links issue
+    needs: links
+    if: >-
+      needs.links.outputs.issue != ''
+      && github.event_name != 'pull_request'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      issues: write
+
+    steps:
+      - name: Write broken-links issue
+        env:
+          ISSUE: ${{ needs.links.outputs.issue }}
+        run: printf '%s\n' "$ISSUE" > broken-links-issue.md
+
       - name: File or refresh broken-links issue
-        if: steps.lychee.outcome == 'failure'
         uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
