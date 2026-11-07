@@ -34,7 +34,6 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 10
     outputs:
-      drift: ${{ steps.check.outputs.drift }}
       issue: ${{ steps.check.outputs.issue }}
 
     steps:
@@ -88,12 +87,7 @@ jobs:
           tested=$(tested_with_series)
           require_series "siren-json.cabal tested-with" "$tested"
 
-          drift=false
-          [ "$expected" = "$matrix" ] || drift=true
-          [ "$expected" = "$tested" ] || drift=true
-          echo "drift=$drift" >> "$GITHUB_OUTPUT"
-
-          [ "$drift" = true ] || exit 0
+          [ "$expected" = "$matrix" ] && [ "$expected" = "$tested" ] && exit 0
 
           # create-an-issue reads the title and labels from front matter.
           cat > ghc-drift-issue.md <<EOF
@@ -123,13 +117,13 @@ jobs:
             echo "$delimiter"
           } >> "$GITHUB_OUTPUT"
 
-  # Filing is its own job so detection, which pull requests run, never holds
+  # Filing jobs are separate so the checks, which pull requests run, never hold
   # issues: write.
   file-drift-issue:
     name: File GHC matrix drift issue
     needs: drift
     if: >-
-      needs.drift.outputs.drift == 'true'
+      needs.drift.outputs.issue != ''
       && github.event_name != 'pull_request'
     runs-on: ubuntu-26.04
     timeout-minutes: 10
@@ -155,8 +149,7 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 10
     outputs:
-      broken: ${{ steps.lychee.outcome == 'failure' }}
-      report: ${{ steps.report.outputs.report }}
+      issue: ${{ steps.compose.outputs.issue }}
 
     steps:
       - name: Checkout
@@ -189,38 +182,11 @@ jobs:
           lychee --config lychee.toml --no-progress --mode task --format markdown './**/*.md' \
             | tee lychee/out.md "$GITHUB_STEP_SUMMARY"
 
-      - name: Export report
-        id: report
-        if: steps.lychee.outcome == 'failure'
-        run: |
-          set -euo pipefail
-
-          delimiter=$(openssl rand -hex 16)
-          {
-            echo "report<<$delimiter"
-            cat lychee/out.md
-            echo "$delimiter"
-          } >> "$GITHUB_OUTPUT"
-
-  # Filing is its own job so the link check, which pull requests run, never
-  # holds issues: write.
-  file-links-issue:
-    name: File broken-links issue
-    needs: links
-    if: >-
-      needs.links.outputs.broken == 'true'
-      && github.event_name != 'pull_request'
-    runs-on: ubuntu-26.04
-    timeout-minutes: 10
-    permissions:
-      issues: write
-
-    steps:
       # create-an-issue reads the title and labels from front matter, which
       # lychee's report has no way to carry.
       - name: Compose broken-links issue
-        env:
-          REPORT: ${{ needs.links.outputs.report }}
+        id: compose
+        if: steps.lychee.outcome == 'failure'
         run: |
           set -euo pipefail
 
@@ -231,7 +197,31 @@ jobs:
             - documentation
           ---
           EOF
-          printf '%s\n' "$REPORT" >> broken-links-issue.md
+          cat lychee/out.md >> broken-links-issue.md
+
+          delimiter=$(openssl rand -hex 16)
+          {
+            echo "issue<<$delimiter"
+            cat broken-links-issue.md
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
+
+  file-links-issue:
+    name: File broken-links issue
+    needs: links
+    if: >-
+      needs.links.outputs.issue != ''
+      && github.event_name != 'pull_request'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      issues: write
+
+    steps:
+      - name: Write broken-links issue
+        env:
+          ISSUE: ${{ needs.links.outputs.issue }}
+        run: printf '%s\n' "$ISSUE" > broken-links-issue.md
 
       - name: File or refresh broken-links issue
         uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2.9.2
