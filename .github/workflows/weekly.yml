@@ -6,7 +6,6 @@ name: Weekly
 # These sensors watch state that changes without a commit. Nobody is waiting
 # on a scheduled run, so each reports through a tracking issue instead of
 # failing, refreshing the standing one rather than filing a new one weekly.
-# Pull request runs file nothing; a dead link fails the check instead.
 
 on:
   workflow_dispatch:
@@ -23,8 +22,7 @@ permissions:
 
 concurrency:
   # Each pull request gets its own group so its run never waits on the
-  # scheduled one or cancels another pull request's. Outside pull requests the
-  # number is empty.
+  # scheduled one or cancels another pull request's.
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: false
 
@@ -167,9 +165,9 @@ jobs:
         with:
           install_args: lychee
 
-      # A dead link fails a pull request. Other runs carry on so the filing
-      # job can open a tracking issue. The token lifts GitHub's anonymous rate
-      # limit on github.com links.
+      # Only a pull request fails on a dead link; other runs go on to file an
+      # issue. The token lifts GitHub's anonymous rate limit on github.com
+      # links.
       - name: Check links
         id: lychee
         continue-on-error: ${{ github.event_name != 'pull_request' }}

@@ -19,8 +19,7 @@ permissions:
 concurrency:
   # A cancelled sweep loses its resume point and restarts from the first pull
   # request. Each pull request gets its own group so its dry run never waits on
-  # the sweep or cancels another pull request's. Outside pull requests the
-  # number is empty.
+  # the sweep or cancels another pull request's.
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
 
 jobs:
@@ -40,7 +39,6 @@ jobs:
     steps:
       - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11
         with:
-          # Logs what the sweep would mark or close, and changes nothing.
           debug-only: ${{ github.event_name == 'pull_request' }}
           days-before-issue-stale: -1
           # Issues already labelled stale would still close without this.

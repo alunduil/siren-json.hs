@@ -39,7 +39,8 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC
   matrix drift and the external link sweep, each filing a tracking issue rather
   than failing. `daily.yml` sweeps stale pull requests, exempting
-  Renovate's `dependencies` label. Workflow files are named for
+  Renovate's `dependencies` label. Both also run on pull requests, where they
+  write nothing and a dead link fails, so their jobs can be required. Workflow files are named for
   *when* they run, not the tool (alunduil-chezmoi ADR 0004), so always-on
   sensors become jobs in `ci.yml` rather than new files. Sibling Haskell repos
   still use the older per-tool `pre-commit.yml` layout.
