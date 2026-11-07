@@ -8,6 +8,13 @@
       "matchPackageNames": ["fourmolu/fourmolu", "ndmitchell/hlint"],
       "versioning": "loose",
       "extractVersion": "^v(?<version>.+)$"
+    },
+    {
+      "description": "Updates stay within each GHC reference's major series; new series arrive through the weekly matrix drift issue. Release tags wrap the version as ghc-X.Y.Z-release.",
+      "matchDatasources": ["github-tags"],
+      "matchDepNames": ["ghc/ghc"],
+      "versioning": "regex:^(?<compatibility>\\d+\\.\\d+)\\.(?<patch>\\d+)$",
+      "extractVersion": "^ghc-(?<version>\\d+\\.\\d+\\.\\d+)-release$"
     }
   ]
 }
