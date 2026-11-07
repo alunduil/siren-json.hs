@@ -43,9 +43,8 @@ runs:
         if [ ! -d "$ghcup/ghc/$ghc" ]; then
           paths+=("$ghcup/ghc/$ghc")
         fi
-        # The key names the OS release, not the weekly image build: GitHub
-        # rolls a new build out every week and serves several at once, so
-        # keying on the build leaves most runs on a cold cache.
+        # GitHub ships a new runner image build weekly and serves several at
+        # once, so a key per build misses on every cell each week.
         {
           echo "ghc=$ghc"
           echo "key=ghcup-${ImageOS:?}-$RUNNER_ARCH-ghc-$ghc-cabal-$CABAL"
