@@ -53,8 +53,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, macos]
-        # Renovate's annotation must precede a *_VERSION key, so each entry is
-        # a map rather than a bare version.
+        # Renovate's githubActionsVersions manager only matches a *_VERSION
+        # key, so each entry is a map.
         ghc:
           - # renovate: datasource=github-tags depName=ghc/ghc
             GHC_VERSION: "9.6.7"

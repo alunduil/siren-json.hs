@@ -10,7 +10,7 @@
       "extractVersion": "^v(?<version>.+)$"
     },
     {
-      "description": "Each GHC reference tests one major series, so updates stay within it. A new series enters through the weekly GHC matrix drift issue. Release tags wrap the version as ghc-X.Y.Z-release.",
+      "description": "Updates stay within each GHC reference's major series; new series arrive through the weekly matrix drift issue. Release tags wrap the version as ghc-X.Y.Z-release.",
       "matchDatasources": ["github-tags"],
       "matchDepNames": ["ghc/ghc"],
       "versioning": "regex:^(?<compatibility>\\d+\\.\\d+)\\.(?<patch>\\d+)$",

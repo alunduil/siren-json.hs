@@ -6,7 +6,7 @@ description: Install GHC and cabal-install with haskell-actions/setup, restoring
 
 inputs:
   ghc-version:
-    description: An exact GHC release, which the toolchain cache key names.
+    description: An exact GHC release, such as 9.12.4. The toolchain cache keys on it.
     required: true
   cabal-version:
     description: An exact cabal-install release.
