@@ -10,10 +10,11 @@
       "extractVersion": "^v(?<version>.+)$"
     },
     {
-      "description": "Each GHC reference tests one major series, so updates stay within it. A new series enters through the weekly GHC matrix drift issue.",
+      "description": "Each GHC reference tests one major series, so updates stay within it. A new series enters through the weekly GHC matrix drift issue. Release tags wrap the version as ghc-X.Y.Z-release.",
       "matchDatasources": ["github-tags"],
       "matchDepNames": ["ghc/ghc"],
-      "versioning": "regex:^(?<compatibility>\\d+\\.\\d+)\\.(?<patch>\\d+)$"
+      "versioning": "regex:^(?<compatibility>\\d+\\.\\d+)\\.(?<patch>\\d+)$",
+      "extractVersion": "^ghc-(?<version>\\d+\\.\\d+\\.\\d+)-release$"
     }
   ]
 }

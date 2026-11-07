@@ -56,15 +56,15 @@ jobs:
         # Renovate's annotation must precede a *_VERSION key, so each entry is
         # a map rather than a bare version.
         ghc:
-          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+          - # renovate: datasource=github-tags depName=ghc/ghc
             GHC_VERSION: "9.6.7"
-          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+          - # renovate: datasource=github-tags depName=ghc/ghc
             GHC_VERSION: "9.8.4"
-          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+          - # renovate: datasource=github-tags depName=ghc/ghc
             GHC_VERSION: "9.10.3"
-          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+          - # renovate: datasource=github-tags depName=ghc/ghc
             GHC_VERSION: "9.12.4"
-          - # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+          - # renovate: datasource=github-tags depName=ghc/ghc
             GHC_VERSION: "9.14.1"
             # Metadata and docs don't vary by GHC or OS, so one leg checks
             # them.
@@ -153,7 +153,7 @@ jobs:
     timeout-minutes: 30
 
     env:
-      # renovate: datasource=github-tags depName=ghc/ghc extractVersion=^ghc-(?<version>\d+\.\d+\.\d+)-release$
+      # renovate: datasource=github-tags depName=ghc/ghc
       GHC_VERSION: "9.14.1"
 
     steps:
