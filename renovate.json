@@ -1,7 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>alunduil/renovate-config"],
+  "extends": ["github>alunduil/renovate-config", ":automergeMinor"],
   "packageRules": [
+    {
+      "description": "Semver lets a 0.x release break in a minor or a patch, and :automergeMinor merges both",
+      "matchJsonata": ["isBreaking = true"],
+      "automerge": false
+    },
     {
       "description": "Default versioning never offers four-component PVP versions, and release tags carry a v that mise.toml omits.",
       "matchManagers": ["mise"],
