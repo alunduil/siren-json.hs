@@ -3,7 +3,7 @@
   "extends": ["github>alunduil/renovate-config", ":automergeMinor"],
   "packageRules": [
     {
-      "description": "Semver lets a 0.x release break in a minor or a patch, and :automergeMinor merges both",
+      "description": "Semver lets a 0.x minor or patch break. Renovate marks these breaking only under semver-style versioning, not loose or regex.",
       "matchJsonata": ["isBreaking = true"],
       "automerge": false
     },
