@@ -59,7 +59,12 @@ Keep export changes out of unrelated work so each version bump is deliberate.
 
 ## Add another agent's instruction file
 
-Keep this filename: it's the path coding agents look for. A tool that reads
-only its own path gets a file importing this one and carrying only rules false
-for every other agent; [`CLAUDE.md`](CLAUDE.md) is that file for Claude Code. A
-rule holding for more than one tool belongs here.
+Coding agents look for this filename, so keep it. For a tool that reads only
+its own file:
+
+1. Create that file with an import of this guide, as [`CLAUDE.md`](CLAUDE.md)
+   does for Claude Code.
+2. Add only rules no other agent needs. A rule for more than one tool goes
+   here.
+3. Add the file beside `AGENTS.md` in the `.vale.ini` glob that skips style
+   rules.
