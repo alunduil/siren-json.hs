@@ -1,10 +1,5 @@
 # siren-json.hs — repo guide for coding agents
 
-Keep this filename: it's the path coding agents look for. A tool that reads
-only its own path gets a file importing this one and carrying only rules false
-for every other agent; [`CLAUDE.md`](CLAUDE.md) is that file for Claude Code. A
-rule holding for more than one tool belongs here.
-
 Haskell library: types, classes, and functions for the
 `application/vnd.siren+json` hypermedia media type. Library code in
 `src/Data/SirenJSON.hs`; orphan-instance shims for upstream types under
@@ -61,3 +56,10 @@ Keep export changes out of unrelated work so each version bump is deliberate.
 - An issue blocked by unshipped prerequisites: propose deferral with
   `blocked-by` edges rather than writing premature code.
 - Revert incidental out-of-scope edits before requesting review.
+
+## Add another agent's instruction file
+
+Keep this filename: it's the path coding agents look for. A tool that reads
+only its own path gets a file importing this one and carrying only rules false
+for every other agent; [`CLAUDE.md`](CLAUDE.md) is that file for Claude Code. A
+rule holding for more than one tool belongs here.
