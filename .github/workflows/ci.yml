@@ -82,6 +82,10 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJSON(needs.ghc-versions.outputs.matrix) }}
 
+    env:
+      # Metadata and docs don't vary by GHC or OS, so one leg checks them.
+      PACKAGE_CHECKS: ${{ matrix.newest && startsWith(matrix.os, 'ubuntu-') }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -142,14 +146,13 @@ jobs:
         working-directory: sdist-build
         run: cabal test all --enable-tests --test-show-details=direct $ALLOW_NEWER
 
-      # Metadata and docs don't vary by GHC or OS, so one leg checks them.
       - name: Check package metadata
-        if: matrix.newest && startsWith(matrix.os, 'ubuntu-')
+        if: env.PACKAGE_CHECKS == 'true'
         working-directory: sdist-build
         run: cabal check
 
       - name: Haddock
-        if: matrix.newest && startsWith(matrix.os, 'ubuntu-')
+        if: env.PACKAGE_CHECKS == 'true'
         working-directory: sdist-build
         run: cabal haddock all $ALLOW_NEWER
 
