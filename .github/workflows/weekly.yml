@@ -92,9 +92,8 @@ jobs:
           labels:
             - infrastructure
           ---
-          \`tested-with\`, which CI builds its matrix from, should track
-          every GHC major series upstream hasn't end-of-lifed (policy:
-          alunduil/collection-json.hs#141).
+          \`tested-with\` should list every GHC major series upstream
+          hasn't end-of-lifed (policy: alunduil/collection-json.hs#141).
 
           | Source | Series |
           | --- | --- |

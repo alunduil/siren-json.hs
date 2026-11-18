@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 name: Read tested GHC versions
-description: Build a GHC matrix from tested-with in siren-json.cabal with get-tested.
+description: Turn tested-with in siren-json.cabal into a GHC build matrix.
 
 inputs:
   ubuntu-version:
@@ -23,8 +23,8 @@ outputs:
 runs:
   using: composite
   steps:
-    # No get-tested release yet carries SHA pins on its nested actions, which
-    # this repository's action policy requires, so the pin names a commit.
+    # Pinned to a commit: the action policy requires SHA-pinned nested
+    # actions, and v0.1.10.0 predates them.
     - name: Build GHC matrix
       id: matrix
       uses: Kleidukos/get-tested@66e7d3233e529aee4a22ff5096288faa26f3fc28

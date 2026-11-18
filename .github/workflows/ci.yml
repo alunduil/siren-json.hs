@@ -44,8 +44,8 @@ jobs:
       # actions it calls in turn.
       - uses: tox-dev/action-pre-commit-uv@9316eafda3550b0365575c60b9f53725a81d0cfd # v1.1.2
 
-  # tested-with in siren-json.cabal is the only list of GHC versions; every
-  # other job reads it from here.
+  # tested-with in siren-json.cabal is the only list of GHC versions. Other
+  # jobs take their GHC versions from this job.
   ghc-versions:
     name: Read tested GHC versions
     runs-on: ubuntu-26.04
@@ -55,7 +55,8 @@ jobs:
       newest: ${{ steps.tested.outputs.newest }}
 
     env:
-      # Renovate's githubActionsVersions manager only matches a *_VERSION key.
+      # Renovate's githubActionsVersions manager only matches a *_VERSION key,
+      # so the runner versions are env vars rather than inputs.
       # renovate: datasource=github-runners depName=ubuntu
       UBUNTU_VERSION: "26.04"
       # renovate: datasource=github-runners depName=macos
