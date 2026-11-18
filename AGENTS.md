@@ -34,7 +34,8 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   and `.gitignore` take a `REUSE.toml` stanza instead. `reuse lint` reads file
   contents, so prose quoting a tag with its value needs
   `REUSE-IgnoreStart`/`REUSE-IgnoreEnd` around it — see `CONTRIBUTING.md`.
-- CI: `.github/workflows/ci.yml` runs pre-commit, the GHC matrix on Linux and
+- CI: `.github/workflows/ci.yml` runs pre-commit, Vale at warning level over
+  the lines a pull request adds, the GHC matrix on Linux and
   macOS building from the sdist tarball, and a coverage job that uploads to
   Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC
   matrix drift and the external link sweep, each filing a tracking issue rather
