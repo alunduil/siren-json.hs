@@ -20,6 +20,10 @@ on:
 permissions:
   contents: read
 
+env:
+  # renovate: datasource=github-releases depName=Kleidukos/get-tested versioning=loose extractVersion=^v(?<version>\d+\.\d+\.\d+\.\d+)$
+  GET_TESTED_VERSION: "0.1.10.0"
+
 concurrency:
   # Each pull request gets its own group so its run never waits on the
   # scheduled one or cancels another pull request's.
@@ -35,13 +39,21 @@ jobs:
       issue: ${{ steps.check.outputs.issue }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # The action checks out this repository itself. Its pin matches ci.yml.
+      - name: Read tested GHC versions
+        id: tested
+        uses: Kleidukos/get-tested@66e7d3233e529aee4a22ff5096288faa26f3fc28
+        with:
+          cabal-file: siren-json.cabal
+          version: ${{ env.GET_TESTED_VERSION }}
+          versions-only: true
 
       # Policy (alunduil/collection-json.hs#141): test every GHC major
       # series upstream has not end-of-lifed.
       - name: Detect drift
         id: check
+        env:
+          TESTED_VERSIONS: ${{ steps.tested.outputs.matrix }}
         run: |
           set -euo pipefail
 
@@ -54,14 +66,9 @@ jobs:
               | jq -r 'map(select(.eol == false)) | .[].cycle' | sort -V || true
           }
 
-          matrix_series() {
-            yq '.jobs.build.strategy.matrix.ghc[].GHC_VERSION' \
-              .github/workflows/ci.yml | sed -E 's/\.[0-9]+$//' | sort -V || true
-          }
-
           tested_with_series() {
-            grep -oE 'GHC == [0-9]+\.[0-9]+' siren-json.cabal \
-              | grep -oE '[0-9]+\.[0-9]+' | sort -V || true
+            jq -r '.[]' <<<"$TESTED_VERSIONS" \
+              | sed -E 's/\.[0-9]+$//' | sort -uV || true
           }
 
           # An empty set means a schema change, a moved field, or a renamed
@@ -79,13 +86,10 @@ jobs:
           expected=$(upstream_series)
           require_series "endoflife.date" "$expected"
 
-          matrix=$(matrix_series)
-          require_series ".github/workflows/ci.yml" "$matrix"
-
           tested=$(tested_with_series)
           require_series "siren-json.cabal tested-with" "$tested"
 
-          [ "$expected" = "$matrix" ] && [ "$expected" = "$tested" ] && exit 0
+          [ "$expected" = "$tested" ] && exit 0
 
           # create-an-issue reads the title and labels from front matter.
           cat > ghc-drift-issue.md <<EOF
@@ -94,18 +98,17 @@ jobs:
           labels:
             - infrastructure
           ---
-          The CI matrix and \`tested-with\` should track every GHC major
-          series upstream hasn't end-of-lifed (policy:
+          \`tested-with\`, which CI builds its matrix from, should track
+          every GHC major series upstream hasn't end-of-lifed (policy:
           alunduil/collection-json.hs#141).
 
           | Source | Series |
           | --- | --- |
           | Expected (endoflife.date, not end-of-life) | $(as_csv "$expected") |
-          | CI matrix (\`.github/workflows/ci.yml\`) | $(as_csv "$matrix") |
           | \`tested-with\` (\`siren-json.cabal\`) | $(as_csv "$tested") |
 
-          Update the matrix and \`tested-with\`, then bump per PVP
-          (CI/packaging-only is a patch).
+          Update \`tested-with\`, then bump per PVP (CI/packaging-only is a
+          patch).
           EOF
 
           delimiter=$(openssl rand -hex 16)
