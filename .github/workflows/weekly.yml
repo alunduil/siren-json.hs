@@ -20,10 +20,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # renovate: datasource=github-releases depName=Kleidukos/get-tested versioning=loose extractVersion=^v(?<version>\d+\.\d+\.\d+\.\d+)$
-  GET_TESTED_VERSION: "0.1.10.0"
-
 concurrency:
   # Each pull request gets its own group so its run never waits on the
   # scheduled one or cancels another pull request's.
@@ -39,21 +35,19 @@ jobs:
       issue: ${{ steps.check.outputs.issue }}
 
     steps:
-      # The action checks out this repository itself. Its pin matches ci.yml.
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
       - name: Read tested GHC versions
         id: tested
-        uses: Kleidukos/get-tested@66e7d3233e529aee4a22ff5096288faa26f3fc28
-        with:
-          cabal-file: siren-json.cabal
-          version: ${{ env.GET_TESTED_VERSION }}
-          versions-only: true
+        uses: ./.github/actions/tested-ghc
 
       # Policy (alunduil/collection-json.hs#141): test every GHC major
       # series upstream has not end-of-lifed.
       - name: Detect drift
         id: check
         env:
-          TESTED_VERSIONS: ${{ steps.tested.outputs.matrix }}
+          TESTED_MATRIX: ${{ steps.tested.outputs.matrix }}
         run: |
           set -euo pipefail
 
@@ -67,7 +61,7 @@ jobs:
           }
 
           tested_with_series() {
-            jq -r '.[]' <<<"$TESTED_VERSIONS" \
+            jq -r '.include[].ghc' <<<"$TESTED_MATRIX" \
               | sed -E 's/\.[0-9]+$//' | sort -uV || true
           }
 

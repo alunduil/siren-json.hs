@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt
+# SPDX-License-Identifier: MIT
+
+name: Read tested GHC versions
+description: Build a GHC matrix from tested-with in siren-json.cabal with get-tested.
+
+inputs:
+  ubuntu-version:
+    description: Ubuntu runner versions for the matrix, comma separated.
+    default: latest
+  macos-version:
+    description: macOS runner versions for the matrix, comma separated. Empty leaves macOS out.
+    default: ""
+
+outputs:
+  matrix:
+    description: A strategy matrix whose include rows carry os, ghc, oldest, and newest.
+    value: ${{ steps.matrix.outputs.matrix }}
+  newest:
+    description: The newest GHC version in tested-with.
+    value: ${{ steps.newest.outputs.ghc }}
+
+runs:
+  using: composite
+  steps:
+    # No get-tested release yet carries SHA pins on its nested actions, which
+    # this repository's action policy requires, so the pin names a commit.
+    - name: Build GHC matrix
+      id: matrix
+      uses: Kleidukos/get-tested@66e7d3233e529aee4a22ff5096288faa26f3fc28
+      env:
+        # renovate: datasource=github-releases depName=Kleidukos/get-tested versioning=loose extractVersion=^v(?<version>\d+\.\d+\.\d+\.\d+)$
+        GET_TESTED_VERSION: "0.1.10.0"
+      with:
+        cabal-file: siren-json.cabal
+        version: ${{ env.GET_TESTED_VERSION }}
+        ubuntu-version: ${{ inputs.ubuntu-version }}
+        macos-version: ${{ inputs.macos-version }}
+
+    - name: Find newest GHC
+      id: newest
+      shell: bash
+      env:
+        MATRIX: ${{ steps.matrix.outputs.matrix }}
+      run: |
+        set -euo pipefail
+        ghc=$(jq -er 'first(.include[] | select(.newest) | .ghc)' <<<"$MATRIX")
+        echo "ghc=$ghc" >> "$GITHUB_OUTPUT"

@@ -22,8 +22,6 @@ env:
   ALLOW_NEWER: --allow-newer=network-arbitrary:base,network-arbitrary:QuickCheck
   # renovate: datasource=github-tags depName=haskell/cabal versioning=loose extractVersion=^cabal-install-v(?<version>\d+\.\d+\.\d+\.\d+)$
   CABAL_VERSION: "3.18.2.0"
-  # renovate: datasource=github-releases depName=Kleidukos/get-tested versioning=loose extractVersion=^v(?<version>\d+\.\d+\.\d+\.\d+)$
-  GET_TESTED_VERSION: "0.1.10.0"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -53,8 +51,8 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      newest: ${{ fromJSON(steps.newest.outputs.matrix)[0] }}
+      matrix: ${{ steps.tested.outputs.matrix }}
+      newest: ${{ steps.tested.outputs.newest }}
 
     env:
       # Renovate's githubActionsVersions manager only matches a *_VERSION key.
@@ -64,26 +62,15 @@ jobs:
       MACOS_VERSION: "26"
 
     steps:
-      # The action checks out this repository itself. No release yet carries
-      # SHA pins on its nested actions, which this repository's action policy
-      # requires, so the pin names a commit rather than a tag.
-      - name: Build GHC matrix
-        id: matrix
-        uses: Kleidukos/get-tested@66e7d3233e529aee4a22ff5096288faa26f3fc28
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Read tested GHC versions
+        id: tested
+        uses: ./.github/actions/tested-ghc
         with:
-          cabal-file: siren-json.cabal
-          version: ${{ env.GET_TESTED_VERSION }}
           ubuntu-version: ${{ env.UBUNTU_VERSION }}
           macos-version: ${{ env.MACOS_VERSION }}
-
-      - name: Find newest GHC
-        id: newest
-        uses: Kleidukos/get-tested@66e7d3233e529aee4a22ff5096288faa26f3fc28
-        with:
-          cabal-file: siren-json.cabal
-          version: ${{ env.GET_TESTED_VERSION }}
-          versions-only: true
-          newest: true
 
   build:
     name: GHC ${{ matrix.ghc }} / ${{ matrix.os }}
