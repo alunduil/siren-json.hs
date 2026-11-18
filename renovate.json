@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>alunduil/renovate-config", ":automergeMinor"],
+  "extends": [
+    "github>alunduil/renovate-config",
+    "github>alunduil/renovate-config:haskell",
+    ":automergeMinor"
+  ],
   "packageRules": [
     {
       "description": "Semver lets a 0.x minor or patch break. Renovate marks these breaking only under semver-style versioning, not loose or regex.",
@@ -13,13 +17,6 @@
       "matchPackageNames": ["fourmolu/fourmolu", "ndmitchell/hlint"],
       "versioning": "loose",
       "extractVersion": "^v(?<version>.+)$"
-    },
-    {
-      "description": "Updates stay within each GHC reference's major series; new series arrive through the weekly matrix drift issue. Release tags wrap the version as ghc-X.Y.Z-release.",
-      "matchDatasources": ["github-tags"],
-      "matchDepNames": ["ghc/ghc"],
-      "versioning": "regex:^(?<compatibility>\\d+\\.\\d+)\\.(?<patch>\\d+)$",
-      "extractVersion": "^ghc-(?<version>\\d+\\.\\d+\\.\\d+)-release$"
     }
   ]
 }
