@@ -31,5 +31,3 @@ submit a pull request and would like attribution; please, add yourself to the
 [Hackage]: https://hackage.haskell.org/package/siren-json
 [Haskell]: https://www.haskell.org/
 [issues]: https://github.com/alunduil/siren-json.hs/issues
-
-This library is really simple to use.
