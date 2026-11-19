@@ -38,14 +38,13 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   the lines a pull request adds, the GHC matrix on Linux and
   macOS building from the sdist tarball, and a coverage job that uploads to
   Codecov (`codecov.yml`). `weekly.yml` carries the scheduled sensors: GHC
-  matrix drift and the external link sweep, each filing a tracking issue rather
+  series drift and the external link sweep, each filing a tracking issue rather
   than failing. `daily.yml` sweeps stale pull requests, exempting
-  Renovate's `dependencies` label. Both also run on pull requests, where they
-  write nothing and a dead link fails, so their jobs can be required. Workflow
-  files are named for *when* they run, not the tool (alunduil-chezmoi ADR
-  0004), so always-on
-  sensors become jobs in `ci.yml` rather than new files. Sibling Haskell repos
-  still use the older per-tool `pre-commit.yml` layout.
+  Renovate's `dependencies` label. Both also run on pull requests, writing
+  nothing, so their jobs can be required. On a pull request, a dead link fails
+  `Check links`. Workflow files are named for *when* they run, not the tool
+  (alunduil-chezmoi ADR 0004), so always-on sensors become jobs in `ci.yml`
+  rather than new files.
 - Absent (don't go looking): no Nix.
 
 ## Scope discipline
