@@ -77,13 +77,13 @@ jobs:
 
           as_csv() { printf '%s' "$1" | paste -sd, -; }
 
-          expected=$(upstream_series)
-          require_series "endoflife.date" "$expected"
+          supported=$(upstream_series)
+          require_series "endoflife.date" "$supported"
 
           tested=$(tested_with_series)
           require_series "siren-json.cabal tested-with" "$tested"
 
-          [ "$expected" = "$tested" ] && exit 0
+          [ "$supported" = "$tested" ] && exit 0
 
           # create-an-issue reads the title and labels from front matter.
           cat > ghc-drift-issue.md <<EOF
@@ -97,7 +97,7 @@ jobs:
 
           | Source | Series |
           | --- | --- |
-          | Expected (endoflife.date, not end-of-life) | $(as_csv "$expected") |
+          | Expected (endoflife.date, not end-of-life) | $(as_csv "$supported") |
           | \`tested-with\` (\`siren-json.cabal\`) | $(as_csv "$tested") |
 
           Update \`tested-with\`, then bump per PVP (CI/packaging-only is a
@@ -114,7 +114,7 @@ jobs:
   # Filing jobs are separate so the checks, which pull requests run, never hold
   # issues: write.
   file-drift-issue:
-    name: File GHC matrix drift issue
+    name: File GHC series drift issue
     needs: drift
     if: >-
       needs.drift.outputs.issue != ''
