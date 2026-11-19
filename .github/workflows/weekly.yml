@@ -111,8 +111,8 @@ jobs:
             echo "$delimiter"
           } >> "$GITHUB_OUTPUT"
 
-  # Filing jobs are separate so the checks, which pull requests run, never hold
-  # issues: write.
+  # Pull requests run the check jobs, so only the filing jobs hold
+  # `issues: write`.
   file-drift-issue:
     name: File GHC series drift issue
     needs: drift
