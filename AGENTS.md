@@ -41,10 +41,12 @@ Reach for these before `curl`, manual API calls, or first-principles scripts.
   series drift and the external link sweep, each filing a tracking issue rather
   than failing. `daily.yml` sweeps stale pull requests, exempting
   Renovate's `dependencies` label. Both also run on pull requests, writing
-  nothing, so their jobs can be required. On a pull request, a dead link fails
-  `Check links`. Workflow files are named for *when* they run, not the tool
-  (alunduil-chezmoi ADR 0004), so always-on sensors become jobs in `ci.yml`
-  rather than new files.
+  nothing, so their jobs can be required. On a Renovate pull request, a commit
+  Renovate didn't make fails `Check Renovate branch commits` until the owner
+  approves the head; `review.yml` re-runs the failed CI jobs on that approval.
+  On a pull request, a dead link fails `Check links`. Workflow files are named
+  for *when* they run, not the tool (alunduil-chezmoi ADR 0004), so always-on
+  sensors become jobs in `ci.yml` rather than new files.
 - Absent (don't go looking): no Nix.
 
 ## Scope discipline
