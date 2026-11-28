@@ -158,7 +158,7 @@ jobs:
           cabal-version: ${{ env.CABAL_VERSION }}
 
       - name: Update Hackage index
-        run: cabal update
+        uses: ./.github/actions/update-hackage-index
 
       # Everything below builds from the sdist tarball, not the working
       # tree: it exercises the published bounds a Hackage consumer faces
@@ -234,7 +234,7 @@ jobs:
           cabal-version: ${{ env.CABAL_VERSION }}
 
       - name: Update Hackage index
-        run: cabal update
+        uses: ./.github/actions/update-hackage-index
 
       # Builds from the working tree, not the sdist the build job uses: hpc
       # writes .mix/.tix paths relative to the tree it compiled, and only

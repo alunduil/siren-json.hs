@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt
+# SPDX-License-Identifier: MIT
+
+name: Update Hackage index
+description: Restore the Hackage index from the Actions cache so cabal update fetches only what changed.
+
+runs:
+  using: composite
+  steps:
+    # One key a week caps cache use and keeps the restored index recent.
+    - name: Plan index cache
+      id: plan
+      shell: bash
+      run: |
+        prefix="hackage-index-$RUNNER_OS-"
+        {
+          echo "path=$(cabal path --remote-repo-cache)"
+          echo "prefix=$prefix"
+          echo "key=$prefix$(date -u +%G-W%V)"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Restore index
+      id: cache
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.path }}
+        key: ${{ steps.plan.outputs.key }}
+        restore-keys: ${{ steps.plan.outputs.prefix }}
+
+    - name: Update index
+      shell: bash
+      run: cabal update
+
+    # Pull requests can restore entries main saves, so only main saves.
+    - name: Save index
+      if: github.ref == 'refs/heads/main' && steps.cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.path }}
+        key: ${{ steps.cache.outputs.cache-primary-key }}

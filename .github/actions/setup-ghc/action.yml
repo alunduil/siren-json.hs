@@ -67,6 +67,8 @@ runs:
       with:
         ghc-version: ${{ inputs.ghc-version }}
         cabal-version: ${{ inputs.cabal-version }}
+        # update-hackage-index fetches the index.
+        cabal-update: false
 
     - name: Save toolchain
       if: steps.cache.outputs.cache-hit != 'true'
