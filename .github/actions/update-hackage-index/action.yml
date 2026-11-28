@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2017 Alex Brandt
+# SPDX-License-Identifier: MIT
+
+name: Update Hackage index
+description: Run cabal update on top of a cached Hackage index, so it downloads only what changed since the cached copy.
+
+runs:
+  using: composite
+  steps:
+    - name: Plan index cache
+      id: plan
+      shell: bash
+      run: |
+        {
+          echo "path=$(cabal path --remote-repo-cache)"
+          echo "day=$(date -u +%Y-%m-%d)"
+        } >> "$GITHUB_OUTPUT"
+
+    - name: Restore index
+      id: cache
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.path }}
+        key: hackage-index-${{ runner.os }}-${{ steps.plan.outputs.day }}
+        restore-keys: hackage-index-${{ runner.os }}-
+
+    - name: Update index
+      shell: bash
+      run: cabal update
+
+    # Pull requests restore main's entry; a save per pull request would only
+    # spend cache budget. One entry a day keeps the incremental download small.
+    - name: Save index
+      if: github.ref == 'refs/heads/main' && steps.cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.plan.outputs.path }}
+        key: ${{ steps.cache.outputs.cache-primary-key }}
