@@ -289,6 +289,15 @@ jobs:
           files: ${{ steps.report.outputs.report }}
           fail_ci_if_error: true
 
+  # The ruleset requires this job directly, not through `results`: it skips
+  # outside renovate/* branches, and a skipped need fails `results`.
+  check-renovate-commits:
+    name: Check Renovate branch commits
+    uses: alunduil/renovate-config/.github/workflows/check-renovate-commits.yml@6052341d076d02929cd58ba8a5245d4cf13955af # main
+    permissions:
+      contents: read
+      pull-requests: read
+
   # The default-branch ruleset requires this job by name, so renaming it breaks
   # the merge gate. The build cells' names change with the GHC matrix.
   results:
