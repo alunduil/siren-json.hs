@@ -289,9 +289,8 @@ jobs:
           files: ${{ steps.report.outputs.report }}
           fail_ci_if_error: true
 
-  # Required by name in the ruleset, apart from `results`: it skips outside
-  # renovate/* branches, and a skipped need fails `results`. review.yml re-runs
-  # it on the owner's approval.
+  # The ruleset requires this job directly, not through `results`: it skips
+  # outside renovate/* branches, and a skipped need fails `results`.
   check-renovate-commits:
     name: Check Renovate branch commits
     uses: alunduil/renovate-config/.github/workflows/check-renovate-commits.yml@6052341d076d02929cd58ba8a5245d4cf13955af # main
