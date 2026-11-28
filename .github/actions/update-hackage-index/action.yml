@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: MIT
 
 name: Update Hackage index
-description: Run cabal update on top of a cached Hackage index, so it downloads only what changed since the cached copy.
+description: Restore the Hackage index from the Actions cache so cabal update fetches only what changed.
 
 runs:
   using: composite
   steps:
+    # One key a day caps cache use and keeps the restored index recent.
     - name: Plan index cache
       id: plan
       shell: bash
@@ -30,8 +31,7 @@ runs:
       shell: bash
       run: cabal update
 
-    # Pull requests restore main's entry; a save per pull request would only
-    # spend cache budget. One entry a day keeps the incremental download small.
+    # Pull requests can restore entries main saves, so only main saves.
     - name: Save index
       if: steps.cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
