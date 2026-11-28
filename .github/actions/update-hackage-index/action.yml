@@ -11,9 +11,11 @@ runs:
       id: plan
       shell: bash
       run: |
+        prefix="hackage-index-$RUNNER_OS-"
         {
           echo "path=$(cabal path --remote-repo-cache)"
-          echo "day=$(date -u +%Y-%m-%d)"
+          echo "prefix=$prefix"
+          echo "key=$prefix$(date -u +%Y-%m-%d)"
         } >> "$GITHUB_OUTPUT"
 
     - name: Restore index
@@ -21,8 +23,8 @@ runs:
       uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ${{ steps.plan.outputs.path }}
-        key: hackage-index-${{ runner.os }}-${{ steps.plan.outputs.day }}
-        restore-keys: hackage-index-${{ runner.os }}-
+        key: ${{ steps.plan.outputs.key }}
+        restore-keys: ${{ steps.plan.outputs.prefix }}
 
     - name: Update index
       shell: bash
