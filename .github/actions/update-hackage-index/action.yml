@@ -7,7 +7,7 @@ description: Restore the Hackage index from the Actions cache so cabal update fe
 runs:
   using: composite
   steps:
-    # One key a day caps cache use and keeps the restored index recent.
+    # One key a week caps cache use and keeps the restored index recent.
     - name: Plan index cache
       id: plan
       shell: bash
@@ -16,7 +16,7 @@ runs:
         {
           echo "path=$(cabal path --remote-repo-cache)"
           echo "prefix=$prefix"
-          echo "key=$prefix$(date -u +%Y-%m-%d)"
+          echo "key=$prefix$(date -u +%G-W%V)"
         } >> "$GITHUB_OUTPUT"
 
     - name: Restore index
