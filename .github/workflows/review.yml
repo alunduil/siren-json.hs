@@ -10,8 +10,7 @@ on:
 permissions: {}
 
 jobs:
-  # A review starts no pull_request run, so the owner's approval re-runs the
-  # failed CI runs for `Check Renovate branch commits` to see it.
+  # Re-runs `Check Renovate branch commits` on the owner's approval.
   rerun-renovate-commit-checks:
     name: Re-run Renovate commit checks
     uses: alunduil/renovate-config/.github/workflows/rerun-renovate-commit-checks.yml@6052341d076d02929cd58ba8a5245d4cf13955af # main
